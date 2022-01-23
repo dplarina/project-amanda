@@ -1,0 +1,316 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build-platform",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "Platform.sln",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "build-api",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceRoot}/Api"
+      }
+    },
+    {
+      "label": "build-app",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceRoot}/App"
+      }
+    },
+    {
+      "label": "build-builder",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceRoot}/Build"
+      }
+    },
+    {
+      "label": "build-bridge",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceRoot}/Bridge"
+      }
+    },
+    {
+      "label": "build-setup",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceRoot}/Setup"
+      }
+    },
+    {
+      "label": "build-prerender",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceRoot}/Prerender"
+      }
+    },
+    {
+      "label": "build-webjob",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceRoot}/WebJob"
+      }
+    },
+    {
+      "label": "build-admintool",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "options": {
+        "cwd": "${workspaceRoot}/AdminTool"
+      }
+    },
+    {
+      "label": "Watch app",
+      "dependsOn": [
+        "Watch app (dotnet)",
+        "Watch app (angular)"
+      ],
+      "problemMatcher": "$msCompile",
+      "dependsOrder": "parallel",
+      "isBackground": true
+    },
+    {
+      "label": "Watch app (dotnet)",
+      "command": "dotnet",
+      "type": "process",
+      "options": {
+        "cwd": "${workspaceRoot}/App"
+      },
+      "args": [
+        "watch",
+        "run"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "group": "watch-app"
+      }
+    },
+    {
+      "label": "Watch app (angular)",
+      "command": "yarn",
+      "type": "shell",
+      "isBackground": true,
+      "args": [
+        "watch:app"
+      ],
+      "problemMatcher": {
+        "owner": "typescript",
+        "source": "ts",
+        "applyTo": "allDocuments",
+        "fileLocation": [
+          "relative",
+          "${cwd}"
+        ],
+        "pattern": {
+          "regexp": "^\\s*(?:ERROR in )?([^\\s].*)[\\(:](\\d+)[,:](\\d+)(?:\\):\\s+|\\s+-\\s+)(error|warning|info)\\s+TS(\\d+)\\s*:\\s*(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "code": 5,
+          "message": 6
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "Compiling\\.\\.\\.$"
+          },
+          "endsPattern": {
+            "regexp": "Compiled successfully\\.$|Failed to compile"
+          }
+        }
+      },
+      "presentation": {
+        "group": "watch-app"
+      }
+    },
+    {
+      "label": "Watch builder",
+      "dependsOn": [
+        "Watch builder (dotnet)",
+        "Watch builder (angular)"
+      ],
+      "problemMatcher": "$msCompile",
+      "dependsOrder": "parallel",
+      "isBackground": true
+    },
+    {
+      "label": "Watch builder (dotnet)",
+      "command": "dotnet",
+      "type": "process",
+      "options": {
+        "cwd": "${workspaceRoot}/Build"
+      },
+      "args": [
+        "watch",
+        "run"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "group": "watch-build"
+      }
+    },
+    {
+      "label": "Watch builder (angular)",
+      "command": "yarn",
+      "type": "shell",
+      "isBackground": true,
+      "args": [
+        "watch:build"
+      ],
+      "problemMatcher": {
+        "owner": "typescript",
+        "source": "ts",
+        "applyTo": "allDocuments",
+        "fileLocation": [
+          "relative",
+          "${cwd}"
+        ],
+        "pattern": {
+          "regexp": "^\\s*(?:ERROR in )?([^\\s].*)[\\(:](\\d+)[,:](\\d+)(?:\\):\\s+|\\s+-\\s+)(error|warning|info)\\s+TS(\\d+)\\s*:\\s*(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "code": 5,
+          "message": 6
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "Compiling\\.\\.\\.$"
+          },
+          "endsPattern": {
+            "regexp": "Compiled successfully\\.$|Failed to compile"
+          }
+        }
+      },
+      "presentation": {
+        "group": "watch-build"
+      }
+    },
+    {
+      "label": "watch-bridge",
+      "command": "dotnet",
+      "type": "process",
+      "options": {
+        "cwd": "${workspaceRoot}/Bridge"
+      },
+      "args": [
+        "watch",
+        "run"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "watch-bridge-angular",
+      "command": "yarn",
+      "type": "shell",
+      "isBackground": true,
+      "presentation": {
+        "focus": true,
+        "panel": "dedicated"
+      },
+      "args": [
+        "watch:bridge"
+      ],
+      "problemMatcher": {
+        "owner": "typescript",
+        "source": "ts",
+        "applyTo": "allDocuments",
+        "fileLocation": [
+          "relative",
+          "${cwd}"
+        ],
+        "pattern": {
+          "regexp": "^\\s*(?:ERROR in )?([^\\s].*)[\\(:](\\d+)[,:](\\d+)(?:\\):\\s+|\\s+-\\s+)(error|warning|info)\\s+TS(\\d+)\\s*:\\s*(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "code": 5,
+          "message": 6
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "Compiling\\.\\.\\.$"
+          },
+          "endsPattern": {
+            "regexp": "Compiled successfully\\.$|Failed to compile"
+          }
+        }
+      }
+    }
+  ]
+}

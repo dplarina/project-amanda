@@ -1,0 +1,32 @@
+{
+  "eslint.format.enable": true,
+  "eslint.packageManager": "yarn",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "[javascript]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true,
+    }
+  },
+  "[typescript]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true,
+    }
+  },
+  "[scss]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.stylelint": true
+    }
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.suggest.insertMode": "replace",
+  "eslint.lintTask.enable": true,
+  "jest.jestCommandLine": "yarn jest --maxWorkers=4",
+  "jest.autoRun": {
+    "watch": false,
+    "onSave": true
+  }
+}
