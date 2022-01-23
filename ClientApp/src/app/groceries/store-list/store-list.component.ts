@@ -1,12 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Store } from 'src/app/models/store.interface';
 
 @Component({
   selector: 'app-store-list',
   templateUrl: './store-list.component.html',
-  styleUrls: ['./store-list.component.css']
+  styleUrls: ['./store-list.component.scss'],
+  host: {
+    class: 'app-store-list'
+  }
 })
 export class StoreListComponent implements OnInit {
   stores$ = this.http.get<Store[]>('/stores');
@@ -15,7 +19,7 @@ export class StoreListComponent implements OnInit {
     name: new FormControl('', Validators.required)
   });
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {}
 
@@ -28,5 +32,9 @@ export class StoreListComponent implements OnInit {
       .subscribe((store) => {
         this.stores$ = this.http.get<Store[]>('/stores');
       });
+  }
+
+  onBack(): void {
+    this.router.navigate(['/']);
   }
 }
