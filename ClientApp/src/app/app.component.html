@@ -1,5 +1,5 @@
 <body>
-  <mat-toolbar color="primary">
+  <mat-toolbar id="topNavigationBar" color="primary">
     <a id="backBtn" mat-icon-button *ngIf="backRoute$ | async as backRoute" [routerLink]="backRoute">
       <mat-icon>arrow_back</mat-icon>
     </a>
@@ -42,4 +42,60 @@
   <div class="container">
     <router-outlet></router-outlet>
   </div>
+  <mat-toolbar id="bottomNavigationBar" color="primary">
+    <a
+      id="homeBtn"
+      mat-button
+      [routerLink]="['']"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      aria-labelledby="homeLabel"
+    >
+      <mat-icon>home</mat-icon>
+      <div id="homeLabel" class="button-label">Home</div>
+    </a>
+    <a
+      id="calendarBtn"
+      mat-button
+      [routerLink]="['calendar']"
+      routerLinkActive="active"
+      disabled
+      aria-labelledby="calendarLabel"
+    >
+      <mat-icon>calendar_today</mat-icon>
+      <div id="calendarLabel" class="button-label">Calendar</div>
+    </a>
+    <a
+      id="shoppingBtn"
+      mat-button
+      [routerLink]="['shopping']"
+      routerLinkActive="active"
+      aria-labelledby="shoppingLabel"
+    >
+      <mat-icon>shopping_cart</mat-icon>
+      <div id="shoppingLabel" class="button-label">Shopping</div>
+    </a>
+    <a
+      id="shoppingBtn"
+      mat-button
+      [routerLink]="['todo']"
+      routerLinkActive="active"
+      disabled
+      aria-labelledby="todoLabel"
+    >
+      <mat-icon>checklist</mat-icon>
+      <div id="todoLabel" class="button-label">To do</div>
+    </a>
+    <a
+      id="shoppingBtn"
+      mat-button
+      [routerLink]="['notes']"
+      routerLinkActive="active"
+      disabled
+      aria-labelledby="notesLabel"
+    >
+      <mat-icon>text_snippet</mat-icon>
+      <div id="notesLabel" class="button-label">Notes</div>
+    </a>
+  </mat-toolbar>
 </body>

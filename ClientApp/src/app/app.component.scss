@@ -5,3 +5,66 @@ h1 {
 #backBtn {
   margin-right: 16px;
 }
+
+.container {
+  height: calc(100% - 144px);
+
+  display: flex;
+  flex-direction: column;
+
+  > * {
+    width: 100%;
+  }
+}
+
+#bottomNavigationBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+  height: 80px;
+
+  .mat-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    width: 64px;
+    height: 32px;
+  }
+
+  .mat-button {
+    padding: 12px 0 16px 0;
+    flex: 1 1 1%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 400;
+    margin-right: 8px;
+    font-size: 0.75rem;
+    min-width: 48px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &.active {
+      font-weight: 500;
+
+      .mat-icon {
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+
+      .button-label {
+        display: block;
+      }
+    }
+  }
+
+  .button-label {
+    line-height: 1rem;
+    margin-top: 4px;
+    display: none;
+  }
+}
