@@ -1,5 +1,5 @@
 <body>
-  <mat-toolbar id="topNavigationBar" color="primary">
+  <mat-toolbar id="topNavigationBar" color="primary" class="mat-elevation-z2">
     <a id="backBtn" mat-icon-button *ngIf="backRoute$ | async as backRoute" [routerLink]="backRoute">
       <mat-icon>arrow_back</mat-icon>
     </a>
@@ -42,7 +42,7 @@
   <div class="container">
     <router-outlet></router-outlet>
   </div>
-  <mat-toolbar id="bottomNavigationBar" color="primary">
+  <mat-toolbar id="bottomNavigationBar" color="primary" class="mat-elevation-z2">
     <a
       id="homeBtn"
       mat-button
