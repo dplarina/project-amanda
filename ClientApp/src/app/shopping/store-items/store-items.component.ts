@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatSelectionListChange } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
 import { catchError, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { StoreItem } from 'src/app/models/store-item.interface';
 import { Store } from 'src/app/models/store.interface';
@@ -89,8 +90,21 @@ export class StoreItemsComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
+  selectionChange(e: MatSelectionListChange) {
+    forkJoin(
+      e.options.map((option) =>
+        this.http.put(
+          `/api/stores/${this.route.snapshot.params.storeId}/items/${option.value.storeItemId}/selected`,
+          option.selected
+        )
+      )
+    ).subscribe(() => {
+      this.refresh$.next();
+    });
+  }
+
   isSelected(o1: StoreItem, o2: StoreItem): boolean {
-    return o1.selected === o2.selected;
+    return o1.storeItemId === o2.storeItemId && o1.selected === o2.selected;
   }
 
   trackByStoreItemId(index: number, item: StoreItem): string {

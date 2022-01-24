@@ -19,8 +19,13 @@ public class ShoppingController : ControllerBase
   public async Task<IEnumerable<Store>> GetGroceryList()
   {
     return await _dbContext.Stores
-    .Include(s => s.items)
     .Where(s => s.items.Count > 0)
+    .Select(s => new Store
+    {
+      storeId = s.storeId,
+      name = s.name,
+      items = s.items.Where(i => i.selected).ToList()
+    })
     .ToListAsync();
   }
 

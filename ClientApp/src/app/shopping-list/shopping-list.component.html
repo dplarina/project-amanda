@@ -9,8 +9,8 @@
     <mat-expansion-panel-header>
       <mat-panel-title> {{ store.name }} </mat-panel-title>
     </mat-expansion-panel-header>
-    <mat-selection-list #storeItemList>
-      <mat-list-option *ngFor="let item of store.items">
+    <mat-selection-list #storeItemList (selectionChange)="selectionChange($event)">
+      <mat-list-option *ngFor="let item of store.items" [value]="item" [selected]="item.completed">
         {{ item.name }}
       </mat-list-option>
     </mat-selection-list>

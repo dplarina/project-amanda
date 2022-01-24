@@ -126,6 +126,38 @@ public class StoresController : ControllerBase
     return Ok();
   }
 
+  [Route("{storeId}/items/{itemId}/selected")]
+  [HttpPut]
+  public async Task<ActionResult> SetStoreItemSelectedAsync(int storeId, int itemId, [FromBody] bool selected)
+  {
+    var itemInDb = await _dbContext.StoreItems.FirstOrDefaultAsync(x => x.storeId == storeId && x.storeItemId == itemId);
+    if (itemInDb == null)
+    {
+      return NotFound();
+    }
+
+    itemInDb.selected = selected;
+    await _dbContext.SaveChangesAsync();
+
+    return Ok();
+  }
+
+  [Route("{storeId}/items/{itemId}/completed")]
+  [HttpPut]
+  public async Task<ActionResult> SetStoreItemCompeltedAsync(int storeId, int itemId, [FromBody] bool completed)
+  {
+    var itemInDb = await _dbContext.StoreItems.FirstOrDefaultAsync(x => x.storeId == storeId && x.storeItemId == itemId);
+    if (itemInDb == null)
+    {
+      return NotFound();
+    }
+
+    itemInDb.completed = completed;
+    await _dbContext.SaveChangesAsync();
+
+    return Ok();
+  }
+
   [Route("{storeId}/items/{itemId}")]
   [HttpDelete]
   public async Task DeleteStoreItemAsync(int storeId, int itemId)

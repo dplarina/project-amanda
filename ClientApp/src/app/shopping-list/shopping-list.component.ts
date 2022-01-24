@@ -1,6 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { MatSelectionListChange } from '@angular/material/list';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { retryBackoff } from 'backoff-rxjs';
+import { forkJoin, Subject } from 'rxjs';
+import { catchError, shareReplay, startWith, switchMap } from 'rxjs/operators';
 import { Store } from '../models/store.interface';
 import { TopNavService } from '../top-nav.service';
 
@@ -14,9 +19,37 @@ import { TopNavService } from '../top-nav.service';
   }
 })
 export class GroceryListComponent implements OnInit {
-  stores$ = this.http.get<Store[]>('/api/shopping/list');
+  private refresh$ = new Subject();
 
-  constructor(private router: Router, private http: HttpClient, private topNav: TopNavService) {
+  stores$ = this.refresh$.pipe(
+    startWith({}),
+    switchMap(() => this.http.get<Store[]>('/api/shopping/list')),
+    retryBackoff({
+      initialInterval: 100,
+      maxRetries: 5,
+      resetOnSuccess: true
+    }),
+    catchError((err) => {
+      console.error(err);
+
+      this.snackBar
+        .open('Error loading shopping list', 'TRY AGAIN', { duration: 2000 })
+        .onAction()
+        .subscribe(() => {
+          this.refresh$.next();
+        });
+
+      throw err;
+    }),
+    shareReplay(1)
+  );
+
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private topNav: TopNavService,
+    private snackBar: MatSnackBar
+  ) {
     this.topNav.updateTopNav('Shopping list', ['shopping']);
   }
 
@@ -24,6 +57,19 @@ export class GroceryListComponent implements OnInit {
 
   onBack(): void {
     this.router.navigate(['/']);
+  }
+
+  selectionChange(e: MatSelectionListChange) {
+    forkJoin(
+      e.options.map((option) =>
+        this.http.put(
+          `/api/stores/${option.value.storeId}/items/${option.value.storeItemId}/completed`,
+          option.selected
+        )
+      )
+    ).subscribe(() => {
+      this.refresh$.next();
+    });
   }
 
   trackByStoreId(index: number, store: Store): string {
