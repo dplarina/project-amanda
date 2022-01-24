@@ -1,4 +1,4 @@
-h1 {
+ho h1 {
   flex: 1 1 1%;
 }
 
@@ -42,6 +42,14 @@ h1 {
   width: 100%;
   height: 80px;
 
+  ::ng-deep {
+    .mat-button-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
   svg {
     height: 24px;
     width: 24px;
@@ -52,8 +60,9 @@ h1 {
     justify-content: center;
     align-items: center;
     border-radius: 16px;
-    width: 64px;
+    width: 24px;
     height: 32px;
+    background-color: transparent;
   }
 
   .mat-button {
@@ -75,11 +84,15 @@ h1 {
       font-weight: 500;
 
       .mat-icon {
+        width: 64px;
         background-color: rgba(0, 0, 0, 0.2);
+        transition: background 0.2s cubic-bezier(0.55, 0, 0.55, 0.2);
+        transition-property: background, width;
       }
 
       .button-label {
-        display: block;
+        height: 16px;
+        opacity: 1;
       }
     }
   }
@@ -87,6 +100,10 @@ h1 {
   .button-label {
     line-height: 1rem;
     margin-top: 4px;
-    display: none;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: height 0.2s cubic-bezier(0.55, 0, 0.55, 0.2);
+    transition-property: height, opacity;
   }
 }
