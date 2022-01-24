@@ -1,27 +1,29 @@
-<mat-toolbar color="primary">
-  <button id="backBtn" mat-icon-button (click)="onBack()">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <h1>Stores</h1>
-</mat-toolbar>
 <ng-template #loading>
-  <mat-spinner></mat-spinner>
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </ng-template>
-<mat-nav-list>
-  <mat-list-item *ngFor="let store of stores$ | async; else: loading">
-    <a matLine [routerLink]="[store.storeId]">{{ store.name }}</a>
-    <mat-icon>chevron_right</mat-icon>
-  </mat-list-item>
-
-  <form (ngSubmit)="addStore()" [formGroup]="newStoreForm">
-    <div class="add-store-container">
-      <mat-form-field appearance="outline">
-        <mat-label>New store name</mat-label>
-        <input matInput cdkFocusInitial placeholder="My grocery store name" formControlName="name" />
-      </mat-form-field>
-      <button id="addStoreBtn" mat-icon-button color="accent">
-        <mat-icon>add</mat-icon>
-      </button>
-    </div>
-  </form>
-</mat-nav-list>
+<ng-container *ngIf="{ editing: editing$ | async } as opts">
+  <ng-container *ngIf="stores$ | async as stores; else loading">
+    <mat-nav-list>
+      <mat-list-item *ngFor="let store of stores; trackBy: trackByStoreId">
+        <span matLine *ngIf="opts.editing">{{ store.name }}</span>
+        <a matLine [routerLink]="[store.storeId]" *ngIf="!opts.editing">{{ store.name }}</a>
+        <button id="deleteBtn" mat-icon-button *ngIf="opts.editing" (click)="deleteStore(store)">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+        <mat-icon *ngIf="!opts.editing">chevron_right</mat-icon>
+      </mat-list-item>
+      <div class="no-items-label" *ngIf="stores.length === 0">No stores yet. Add one below.</div>
+    </mat-nav-list>
+    <form (ngSubmit)="addStore()" [formGroup]="newStoreForm" *ngIf="opts.editing">
+      <div class="add-store-container">
+        <mat-form-field appearance="outline">
+          <mat-label>New store name</mat-label>
+          <input matInput cdkFocusInitial placeholder="My grocery store name" formControlName="name" />
+        </mat-form-field>
+        <button id="addStoreBtn" mat-icon-button color="accent">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </form>
+  </ng-container>
+</ng-container>

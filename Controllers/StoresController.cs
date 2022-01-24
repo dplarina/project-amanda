@@ -5,7 +5,7 @@ using ProjectAmanda.Models;
 namespace ProjectAmanda.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class StoresController : ControllerBase
 {
   private readonly DataContext _dbContext;

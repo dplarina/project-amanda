@@ -1,3 +1,9 @@
+:host {
+  width: calc(100% - 32px);
+  padding: 16px;
+  display: block;
+}
+
 #backBtn {
   margin-right: 16px;
 }
@@ -7,8 +13,16 @@
   margin-left: 8px;
 }
 
+.mat-nav-list {
+  margin-bottom: 24px;
+}
+
+.no-items-label {
+  padding: 16px;
+  text-align: center;
+}
+
 .add-store-container {
-  margin-top: 24px;
   display: flex;
   align-items: center;
 }
