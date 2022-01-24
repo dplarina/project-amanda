@@ -1,1 +1,44 @@
-<p>store-items works!</p>
+<mat-toolbar color="primary">
+  <button id="backBtn" mat-icon-button (click)="onBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <h1>
+    <span *ngIf="storeName$ | async as storeName; else loadingName"> {{ storeName }} list </span>
+    <ng-template #loadingName> Loading... </ng-template>
+  </h1>
+</mat-toolbar>
+
+<ng-template #loading>
+  <mat-spinner></mat-spinner>
+</ng-template>
+<mat-selection-list *ngIf="store$ | async as store; else loading">
+  <ng-container *ngIf="items$ | async as items">
+    <mat-list-option *ngFor="let item of items" compareWith="isSelected">
+      <div class="option-label">
+        <span class="option-label-text">{{ item.name }}</span>
+        <button mat-icon-button (click)="deleteItem(item)">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    </mat-list-option>
+    <div class="no-items-label" *ngIf="items.length === 0">No items in this store. Add one below.</div>
+  </ng-container>
+
+  <form #itemForm (ngSubmit)="addItem()" [formGroup]="newItemForm">
+    <div class="add-item-container">
+      <mat-form-field appearance="outline">
+        <mat-label>New item</mat-label>
+        <input
+          matInput
+          cdkFocusInitial
+          placeholder="Oreos or something..."
+          formControlName="name"
+          (keydown)="$event.stopPropagation()"
+        />
+      </mat-form-field>
+      <button id="addItemBtn" mat-icon-button color="accent">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </form>
+</mat-selection-list>

@@ -10,7 +10,10 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
-          "strict": true,
+          "strict": true
+        },
+        "@schematics/angular:component": {
+          "changeDetection": "OnPush",
           "style": "scss"
         }
       },

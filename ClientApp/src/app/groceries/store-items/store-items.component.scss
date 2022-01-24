@@ -1,0 +1,38 @@
+#backBtn {
+  margin-right: 16px;
+}
+
+#addItemBtn {
+  margin-bottom: 20px;
+  margin-left: 8px;
+}
+
+.no-items-label {
+  padding: 16px;
+  text-align: center;
+}
+
+.add-item-container {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+}
+
+.option-label-text {
+  flex: 1 1 1%;
+}
+
+.mat-list-item {
+  .mat-icon {
+    color: rgba(0, 0, 0, 0.54);
+  }
+}

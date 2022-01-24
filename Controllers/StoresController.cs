@@ -18,7 +18,7 @@ public class StoresController : ControllerBase
   [HttpGet]
   public async Task<IEnumerable<Store>> GetStoresAsync()
   {
-    return await _dbContext.Stores.ToListAsync();
+    return await _dbContext.Stores.Include(s => s.items).ToListAsync();
   }
 
   [Route("")]
@@ -34,7 +34,9 @@ public class StoresController : ControllerBase
   [HttpGet]
   public async Task<ActionResult<Store>> GetStoreAsync(int id)
   {
-    var storeInDb = await _dbContext.Stores.FirstOrDefaultAsync(store => store.storeId == id);
+    var storeInDb = await _dbContext.Stores
+    .Include(s => s.items)
+    .FirstOrDefaultAsync(store => store.storeId == id);
     return storeInDb ?? (ActionResult<Store>)NotFound();
   }
 
@@ -86,6 +88,24 @@ public class StoresController : ControllerBase
     }
 
     return Ok(itemInDb);
+  }
+
+  [Route("{storeId}/items")]
+  [HttpPost]
+  public async Task<ActionResult<StoreItem>> CreateStoreItemAsync(int storeId, [FromBody] StoreItem item)
+  {
+    var storeInDb = await _dbContext.Stores
+    .Include(s => s.items)
+    .FirstOrDefaultAsync(store => store.storeId == storeId);
+    if (storeInDb == null)
+    {
+      return NotFound();
+    }
+
+    storeInDb.items.Add(item);
+    await _dbContext.SaveChangesAsync();
+
+    return Ok(item);
   }
 
   [Route("{storeId}/items/{itemId}")]

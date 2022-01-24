@@ -6,4 +6,5 @@ public class Store
   public string name { get; set; }
 
   public ICollection<StoreItem> items { get; set; }
+
 }
