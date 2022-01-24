@@ -1,6 +1,9 @@
 <ng-template #loading>
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </ng-template>
+
+<app-note> Create and check items that you want displayed in the grocery list. </app-note>
+
 <ng-container *ngIf="{ editing: editing$ | async } as opts">
   <ng-container *ngIf="items$ | async as items">
     <mat-selection-list *ngIf="store$ | async as store; else loading">

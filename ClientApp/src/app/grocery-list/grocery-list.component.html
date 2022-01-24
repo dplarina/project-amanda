@@ -2,6 +2,8 @@
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </ng-template>
 
+<app-note> Select a store and mark items complete </app-note>
+
 <mat-accordion *ngIf="stores$ | async as stores; else loading">
   <mat-expansion-panel *ngFor="let store of stores; trackBy: trackByStoreId">
     <mat-expansion-panel-header>

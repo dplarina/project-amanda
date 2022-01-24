@@ -1,0 +1,15 @@
+.mat-card.note {
+  display: flex;
+  align-items: center;
+  background-color: rgb(234, 230, 255);
+  color: rgb(82, 67, 170);
+  padding: 8px 8px 8px 16px;
+
+  .note-content {
+    flex: 1 1 1%;
+  }
+
+  .note-icon {
+    margin-right: 16px;
+  }
+}

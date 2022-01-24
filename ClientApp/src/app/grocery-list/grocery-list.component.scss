@@ -1,10 +1,12 @@
 :host {
   display: flex;
   flex-direction: column;
+  width: calc(100% - 32px);
+  padding: 16px;
 }
 
 .mat-accordion {
-  margin: 16px;
+  margin: 16px 0;
 }
 
 #backBtn {

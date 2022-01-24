@@ -1,0 +1,7 @@
+<mat-card class="note" *ngIf="showNote$ | async">
+  <mat-icon class="note-icon">description</mat-icon>
+  <span class="note-content"><ng-content></ng-content></span>
+  <button mat-icon-button (click)="closeNote()">
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-card>

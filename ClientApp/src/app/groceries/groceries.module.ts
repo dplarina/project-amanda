@@ -11,6 +11,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { GroceryListComponent } from '../grocery-list/grocery-list.component';
+import { NoteModule } from '../note/note.module';
 import { GroceriesRoutingModule } from './groceries-routing.module';
 import { GroceriesComponent } from './groceries.component';
 import { StoreItemsComponent } from './store-items/store-items.component';
@@ -21,6 +22,7 @@ import { StoreListComponent } from './store-list/store-list.component';
   imports: [
     CommonModule,
     GroceriesRoutingModule,
+    NoteModule,
     ReactiveFormsModule,
     MatExpansionModule,
     MatListModule,
