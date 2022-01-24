@@ -1,4 +1,23 @@
-ho h1 {
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+:host {
+  ::ng-deep {
+    router-outlet ~ * {
+      box-sizing: border-box;
+      position: absolute;
+      height: 100%;
+      width: 100%;
+    }
+  }
+}
+
+h1 {
   flex: 1 1 1%;
 }
 
@@ -8,6 +27,7 @@ ho h1 {
 
 .container {
   height: calc(100% - 144px);
+  position: relative;
 
   display: flex;
   flex-direction: column;
