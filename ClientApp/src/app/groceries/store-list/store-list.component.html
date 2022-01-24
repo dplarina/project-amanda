@@ -9,7 +9,7 @@
 </ng-template>
 <mat-nav-list>
   <mat-list-item *ngFor="let store of stores$ | async; else: loading">
-    <a matLine [routerLink]="['stores', store.storeId]">{{ store.name }}</a>
+    <a matLine [routerLink]="[store.storeId]">{{ store.name }}</a>
     <mat-icon>chevron_right</mat-icon>
   </mat-list-item>
 
