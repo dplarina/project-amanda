@@ -2,6 +2,19 @@
   width: calc(100% - 32px);
   padding: 16px;
   display: block;
+
+  ::ng-deep {
+    .mat-list-item .mat-list-text {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+
+      a {
+        height: 100%;
+        padding-top: 14px;
+      }
+    }
+  }
 }
 
 #backBtn {
