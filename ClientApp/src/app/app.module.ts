@@ -35,7 +35,8 @@ import { HomeComponent } from './home/home.component';
       {
         path: 'notes',
         loadChildren: () => import('./notes/notes.module').then((m) => m.NotesModule)
-      }
+      },
+      { path: '**', redirectTo: '' }
     ]),
     BrowserAnimationsModule,
 
