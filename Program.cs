@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using ProjectAmanda.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,17 @@ builder.Services.AddDbContext<DataContext>();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+  using var dbContext = scope.ServiceProvider.GetService<DataContext>();
+  if (dbContext == null)
+  {
+    throw new Exception("Failed to create database context");
+  }
+
+  dbContext.Database.Migrate();
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -21,7 +33,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 
 app.MapControllerRoute(
     name: "default",
