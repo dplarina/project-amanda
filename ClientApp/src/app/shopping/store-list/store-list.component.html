@@ -1,6 +1,11 @@
 <ng-template #loading>
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </ng-template>
+
+<app-note>
+  This is a list of stores that can be added to your shopping list. Select a store and add items to show for that store.
+</app-note>
+
 <ng-container *ngIf="{ editing: editing$ | async } as opts">
   <ng-container *ngIf="stores$ | async as stores; else loading">
     <mat-nav-list>

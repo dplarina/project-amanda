@@ -4,7 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { StoreItem } from 'src/app/models/store-item.interface';
 import { Store } from 'src/app/models/store.interface';
 import { TopNavService } from 'src/app/top-nav.service';
@@ -24,6 +24,18 @@ export class StoreItemsComponent implements OnInit {
   store$ = this.refresh$.pipe(
     startWith(null),
     switchMap(() => this.http.get<Store>(`/api/stores/${this.route.snapshot.params.storeId}`)),
+    catchError((err) => {
+      console.error(err);
+
+      this.snackBar
+        .open('Error loading stores', 'TRY AGAIN', { duration: 2000 })
+        .onAction()
+        .subscribe(() => {
+          this.refresh$.next();
+        });
+
+      throw err;
+    }),
     tap((store) => {
       this.topNav.title$.next(`${store.name} items`);
       store.items.length === 0 ? this.topNav.editing$.next(true) : null;
@@ -44,10 +56,10 @@ export class StoreItemsComponent implements OnInit {
     private http: HttpClient,
     private router: Router,
     private route: ActivatedRoute,
-    private snackbar: MatSnackBar,
+    private snackBar: MatSnackBar,
     private topNav: TopNavService
   ) {
-    this.topNav.updateTopNav('Loading...', ['groceries', 'stores'], true);
+    this.topNav.updateTopNav('Loading...', ['shopping', 'stores'], true);
   }
 
   ngOnInit(): void {}
@@ -61,7 +73,7 @@ export class StoreItemsComponent implements OnInit {
       .post<Store>(`/api/stores/${this.route.snapshot.params.storeId}/items`, this.newItemForm.value)
       .subscribe(() => {
         this.newItemForm.reset();
-        this.snackbar.open('Item added', 'OK', { duration: 2000 });
+        this.snackBar.open('Item added', 'OK', { duration: 2000 });
         this.refresh$.next();
       });
   }

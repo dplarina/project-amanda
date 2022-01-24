@@ -25,8 +25,8 @@ import { HomeComponent } from './home/home.component';
         loadChildren: () => import('./calendar/calendar.module').then((m) => m.CalendarModule)
       },
       {
-        path: 'groceries',
-        loadChildren: () => import('./groceries/groceries.module').then((m) => m.GroceriesModule)
+        path: 'shopping',
+        loadChildren: () => import('./shopping/shopping.module').then((m) => m.ShoppingModule)
       },
       {
         path: 'todo',

@@ -6,10 +6,10 @@ namespace ProjectAmanda.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GroceriesController : ControllerBase
+public class ShoppingController : ControllerBase
 {
   private readonly DataContext _dbContext;
-  public GroceriesController(DataContext dbContext)
+  public ShoppingController(DataContext dbContext)
   {
     _dbContext = dbContext;
   }

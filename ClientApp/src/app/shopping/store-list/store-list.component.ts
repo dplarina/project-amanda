@@ -3,8 +3,9 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { retryBackoff } from 'backoff-rxjs';
 import { Subject } from 'rxjs';
-import { shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
+import { catchError, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { Store } from 'src/app/models/store.interface';
 import { TopNavService } from 'src/app/top-nav.service';
 
@@ -25,6 +26,23 @@ export class StoreListComponent implements OnInit {
   stores$ = this.refresh$.pipe(
     startWith({}),
     switchMap(() => this.http.get<Store[]>('/api/stores')),
+    retryBackoff({
+      initialInterval: 100,
+      maxRetries: 5,
+      resetOnSuccess: true
+    }),
+    catchError((err) => {
+      console.error(err);
+
+      this.snackBar
+        .open('Error loading stores', 'TRY AGAIN', { duration: 2000 })
+        .onAction()
+        .subscribe(() => {
+          this.refresh$.next();
+        });
+
+      throw err;
+    }),
     tap((stores) => (stores.length === 0 ? this.topNav.editing$.next(true) : null)),
     shareReplay(1)
   );
@@ -39,7 +57,7 @@ export class StoreListComponent implements OnInit {
     private topNav: TopNavService,
     private snackBar: MatSnackBar
   ) {
-    this.topNav.updateTopNav('Stores', ['groceries'], true);
+    this.topNav.updateTopNav('Stores', ['shopping'], true);
   }
 
   ngOnInit(): void {}

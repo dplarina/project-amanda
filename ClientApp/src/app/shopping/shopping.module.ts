@@ -10,18 +10,18 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { GroceryListComponent } from '../grocery-list/grocery-list.component';
 import { NoteModule } from '../note/note.module';
-import { GroceriesRoutingModule } from './groceries-routing.module';
-import { GroceriesComponent } from './groceries.component';
+import { GroceryListComponent } from '../shopping-list/shopping-list.component';
+import { ShoppingRoutingModule } from './shopping-routing.module';
+import { ShoppingComponent } from './shopping.component';
 import { StoreItemsComponent } from './store-items/store-items.component';
 import { StoreListComponent } from './store-list/store-list.component';
 
 @NgModule({
-  declarations: [StoreListComponent, StoreItemsComponent, GroceriesComponent, GroceryListComponent],
+  declarations: [StoreListComponent, StoreItemsComponent, ShoppingComponent, GroceryListComponent],
   imports: [
     CommonModule,
-    GroceriesRoutingModule,
+    ShoppingRoutingModule,
     NoteModule,
     ReactiveFormsModule,
     MatExpansionModule,
@@ -35,4 +35,4 @@ import { StoreListComponent } from './store-list/store-list.component';
     MatSnackBarModule
   ]
 })
-export class GroceriesModule {}
+export class ShoppingModule {}

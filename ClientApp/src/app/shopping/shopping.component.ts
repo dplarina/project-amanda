@@ -3,17 +3,17 @@ import { Router } from '@angular/router';
 import { TopNavService } from '../top-nav.service';
 
 @Component({
-  selector: 'app-groceries',
-  templateUrl: './groceries.component.html',
-  styleUrls: ['./groceries.component.scss'],
+  selector: 'app-shopping',
+  templateUrl: './shopping.component.html',
+  styleUrls: ['./shopping.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'app-groceries'
+    class: 'app-shopping'
   }
 })
-export class GroceriesComponent implements OnInit {
+export class ShoppingComponent implements OnInit {
   constructor(private router: Router, private topNav: TopNavService) {
-    this.topNav.updateTopNav('Groceries', ['']);
+    this.topNav.updateTopNav('Shopping', ['']);
   }
 
   ngOnInit(): void {}

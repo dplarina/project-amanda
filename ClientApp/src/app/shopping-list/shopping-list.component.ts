@@ -5,19 +5,19 @@ import { Store } from '../models/store.interface';
 import { TopNavService } from '../top-nav.service';
 
 @Component({
-  selector: 'app-grocery-list',
-  templateUrl: './grocery-list.component.html',
-  styleUrls: ['./grocery-list.component.scss'],
+  selector: 'app-shopping-list',
+  templateUrl: './shopping-list.component.html',
+  styleUrls: ['./shopping-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'app-grocery-list'
+    class: 'app-shopping-list'
   }
 })
 export class GroceryListComponent implements OnInit {
-  stores$ = this.http.get<Store[]>('/api/groceries/list');
+  stores$ = this.http.get<Store[]>('/api/shopping/list');
 
   constructor(private router: Router, private http: HttpClient, private topNav: TopNavService) {
-    this.topNav.updateTopNav('Grocery list', ['groceries']);
+    this.topNav.updateTopNav('Shopping list', ['shopping']);
   }
 
   ngOnInit(): void {}
