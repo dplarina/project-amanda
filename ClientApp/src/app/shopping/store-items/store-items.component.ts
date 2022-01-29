@@ -70,11 +70,12 @@ export class StoreItemsComponent implements OnInit {
       return;
     }
 
+    this.newItemForm.reset();
+    this.snackBar.open('Item added', 'OK', { duration: 2000 });
+
     this.http
       .post<Store>(`/api/stores/${this.route.snapshot.params.storeId}/items`, this.newItemForm.value)
       .subscribe(() => {
-        this.newItemForm.reset();
-        this.snackBar.open('Item added', 'OK', { duration: 2000 });
         this.refresh$.next();
       });
   }
