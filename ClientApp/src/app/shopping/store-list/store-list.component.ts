@@ -67,15 +67,14 @@ export class StoreListComponent implements OnInit {
       return;
     }
 
+    var payload = this.newStoreForm.value;
+
     this.newStoreForm.patchValue({
       name: ''
     });
 
     this.http
-      .post<Store>('/api/stores', {
-        name: this.newStoreForm.value.name,
-        items: []
-      })
+      .post<Store>('/api/stores', payload)
       .subscribe((store) => {
         this.snackBar.open('Store added', 'OK', { duration: 2000 });
         this.refresh$.next();

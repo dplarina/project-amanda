@@ -70,12 +70,14 @@ export class StoreItemsComponent implements OnInit {
       return;
     }
 
+    var payload = this.newItemForm.value;
+
     this.newItemForm.patchValue({
       name: ''
     })
 
     this.http
-      .post<Store>(`/api/stores/${this.route.snapshot.params.storeId}/items`, this.newItemForm.value)
+      .post<Store>(`/api/stores/${this.route.snapshot.params.storeId}/items`, payload)
       .subscribe(() => {
         this.snackBar.open('Item added', 'OK', { duration: 2000 });
         this.refresh$.next();
