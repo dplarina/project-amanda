@@ -67,8 +67,9 @@ export class StoreListComponent implements OnInit {
       return;
     }
 
-    this.refresh$.next();
-    this.newStoreForm.reset();
+    this.newStoreForm.patchValue({
+      name: ''
+    });
 
     this.http
       .post<Store>('/api/stores', {
@@ -77,6 +78,7 @@ export class StoreListComponent implements OnInit {
       })
       .subscribe((store) => {
         this.snackBar.open('Store added', 'OK', { duration: 2000 });
+        this.refresh$.next();
       });
   }
 
