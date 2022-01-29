@@ -28,6 +28,7 @@ h1 {
 .container {
   height: calc(100% - 144px);
   position: relative;
+  overflow-y: scroll;
 
   display: flex;
   flex-direction: column;
