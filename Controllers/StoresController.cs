@@ -18,7 +18,14 @@ public class StoresController : ControllerBase
   [HttpGet]
   public async Task<IEnumerable<Store>> GetStoresAsync()
   {
-    return await _dbContext.Stores.Include(s => s.items).ToListAsync();
+    return await _dbContext.Stores.Include(s => s.items)
+    .Select(s => new Store
+    {
+      storeId = s.storeId,
+      name = s.name,
+      items = s.items.OrderBy(i => i.name).ToList()
+    })
+    .ToListAsync();
   }
 
   [Route("")]
@@ -36,6 +43,12 @@ public class StoresController : ControllerBase
   {
     var storeInDb = await _dbContext.Stores
     .Include(s => s.items)
+    .Select(s => new Store
+    {
+      storeId = s.storeId,
+      name = s.name,
+      items = s.items.OrderBy(i => i.name).ToList()
+    })
     .FirstOrDefaultAsync(store => store.storeId == id);
     return storeInDb ?? (ActionResult<Store>)NotFound();
   }
@@ -70,11 +83,14 @@ public class StoresController : ControllerBase
     await _dbContext.SaveChangesAsync();
   }
 
-  [Route("{id}/items")]
+  [Route("{storeId}/items")]
   [HttpGet]
-  public async Task<IEnumerable<Store>> GetStoreItemsAsync()
+  public async Task<IEnumerable<StoreItem>> GetStoreItemsAsync(int storeId)
   {
-    return await _dbContext.Stores.ToListAsync();
+    return await _dbContext.StoreItems
+    .Where(s => s.storeId == storeId)
+    .OrderBy(s => s.name)
+    .ToListAsync();
   }
 
   [Route("{storeId}/items/{itemId}")]
