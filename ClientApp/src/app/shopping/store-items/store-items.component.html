@@ -6,7 +6,11 @@
 
 <ng-container *ngIf="{ editing: editing$ | async } as opts">
   <ng-container *ngIf="items$ | async as items">
-    <mat-selection-list *ngIf="store$ | async as store; else loading" (selectionChange)="selectionChange($event)">
+    <mat-selection-list
+      *ngIf="store$ | async as store; else loading"
+      [compareWith]="compareItems"
+      (selectionChange)="selectionChange($event)"
+    >
       <mat-list-option
         *ngFor="let item of items; trackBy: trackByStoreItemId"
         [value]="item"
