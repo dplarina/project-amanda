@@ -24,7 +24,7 @@ public class ShoppingController : ControllerBase
     {
       storeId = s.storeId,
       name = s.name,
-      items = s.items.Where(i => i.selected).ToList()
+      items = s.items.Where(i => i.selected).OrderBy(i => i.name).ToList()
     })
     .ToListAsync();
   }
