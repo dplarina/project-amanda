@@ -64,7 +64,7 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
     private topNav: TopNavService,
     private signalr:SignalrService
   ) {
-    this.topNav.updateTopNav('Loading...', ['shopping', 'stores'], true);
+    this.topNav.updateTopNav({ title: 'Loading...', backRoute: ['shopping', 'stores'], editable: true });
     this.signalr.refresh$.pipe(takeUntil(this.destroy$)).subscribe(() => this.refresh$.next());
   }
 

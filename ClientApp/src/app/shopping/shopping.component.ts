@@ -13,7 +13,7 @@ import { TopNavService } from '../top-nav.service';
 })
 export class ShoppingComponent implements OnInit {
   constructor(private router: Router, private topNav: TopNavService) {
-    this.topNav.updateTopNav('Shopping', null);
+    this.topNav.updateTopNav({ title: 'Shopping' });
   }
 
   ngOnInit(): void {}

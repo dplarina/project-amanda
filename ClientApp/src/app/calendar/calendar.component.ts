@@ -9,7 +9,7 @@ import { TopNavService } from '../top-nav.service';
 })
 export class CalendarComponent implements OnInit {
   constructor(private topNav: TopNavService) {
-    this.topNav.updateTopNav('Calendar', null);
+    this.topNav.updateTopNav({ title: 'Calendar' });
   }
 
   ngOnInit(): void {}

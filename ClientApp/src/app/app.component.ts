@@ -14,6 +14,7 @@ export class AppComponent {
   backRoute$ = this.topNav.backRoute$;
   editing$ = this.topNav.editing$;
   editable$ = this.topNav.editable$;
+  settingsUrl$ = this.topNav.settingsUrl$;
 
   constructor(private topNav: TopNavService, private changes: SignalrService) {
     this.changes.connect();

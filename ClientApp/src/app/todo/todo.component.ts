@@ -9,7 +9,7 @@ import { TopNavService } from '../top-nav.service';
 })
 export class TodoComponent implements OnInit {
   constructor(private topNav: TopNavService) {
-    this.topNav.updateTopNav('To do', null);
+    this.topNav.updateTopNav({ title: 'To do' });
   }
 
   ngOnInit(): void {}

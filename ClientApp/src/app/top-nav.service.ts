@@ -3,14 +3,22 @@ import { NavigationEnd, Router } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
+export interface TopNavSettings {
+  title: string;
+  backRoute?: string[] | null;
+  editable?: boolean;
+  settingsUrl?: string[] | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class TopNavService implements OnDestroy {
-  backRoute$ = new BehaviorSubject<string[] | null>(null);
+  backRoute$ = new BehaviorSubject<string[] | null | undefined>(undefined);
   title$ = new BehaviorSubject<string>('Loading...');
   editing$ = new BehaviorSubject<boolean>(false);
-  editable$ = new BehaviorSubject<boolean>(false);
+  editable$ = new BehaviorSubject<boolean | undefined>(false);
+  settingsUrl$ = new BehaviorSubject<string[] | null | undefined>(undefined);
 
   private destroy$ = new Subject();
 
@@ -28,9 +36,10 @@ export class TopNavService implements OnDestroy {
     this.destroy$.next();
   }
 
-  updateTopNav(title: string, backRoute: string[] | null, editable: boolean = false): void {
-    this.title$.next(title);
-    this.backRoute$.next(backRoute);
-    this.editable$.next(editable);
+  updateTopNav(settings: TopNavSettings): void {
+    this.title$.next(settings.title);
+    this.backRoute$.next(settings.backRoute);
+    this.editable$.next(settings.editable);
+    this.settingsUrl$.next(settings.settingsUrl);
   }
 }

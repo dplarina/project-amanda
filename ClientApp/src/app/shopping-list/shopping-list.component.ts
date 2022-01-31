@@ -52,7 +52,7 @@ export class GroceryListComponent implements OnInit {
     private snackBar: MatSnackBar,
     private changes: SignalrService
   ) {
-    this.topNav.updateTopNav('Shopping list', ['shopping']);
+    this.topNav.updateTopNav({ title: 'Shopping list', backRoute: ['shopping'], settingsUrl: ['shopping', 'stores'] });
   }
 
   ngOnInit(): void {

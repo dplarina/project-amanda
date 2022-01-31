@@ -58,7 +58,7 @@ export class StoreListComponent implements OnInit {
     private topNav: TopNavService,
     private snackBar: MatSnackBar
   ) {
-    this.topNav.updateTopNav('Stores', ['shopping'], true);
+    this.topNav.updateTopNav({ title: 'Stores', backRoute: ['shopping'], editable: true });
   }
 
   ngOnInit(): void {}

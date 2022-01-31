@@ -6,8 +6,7 @@ import { StoreItemsComponent } from './store-items/store-items.component';
 import { StoreListComponent } from './store-list/store-list.component';
 
 const routes: Routes = [
-  { path: '', component: ShoppingComponent },
-  { path: 'list', component: ShoppingListComponent },
+  { path: '', component: ShoppingListComponent },
   { path: 'stores', component: StoreListComponent },
   { path: 'stores/:storeId', component: StoreItemsComponent }
 ];

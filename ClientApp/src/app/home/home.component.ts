@@ -12,7 +12,7 @@ import { TopNavService } from '../top-nav.service';
 })
 export class HomeComponent implements OnInit {
   constructor(private topNav: TopNavService) {
-    this.topNav.updateTopNav('Home', null);
+    this.topNav.updateTopNav({ title: 'Home' });
   }
 
   ngOnInit(): void {}

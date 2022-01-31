@@ -9,7 +9,7 @@ import { TopNavService } from '../top-nav.service';
 })
 export class NotesComponent implements OnInit {
   constructor(private topNav: TopNavService) {
-    this.topNav.updateTopNav('Notes', null);
+    this.topNav.updateTopNav({ title: 'Notes' });
   }
 
   ngOnInit(): void {}
