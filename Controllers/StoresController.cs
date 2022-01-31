@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using ProjectAmanda.Hubs;
 using ProjectAmanda.Models;
 
 namespace ProjectAmanda.Controllers;
@@ -9,9 +11,11 @@ namespace ProjectAmanda.Controllers;
 public class StoresController : ControllerBase
 {
   private readonly DataContext _dbContext;
-  public StoresController(DataContext dbContext)
+  private readonly IHubContext<ChangesHub> _hubContext;
+  public StoresController(DataContext dbContext, IHubContext<ChangesHub> hubContext)
   {
     _dbContext = dbContext;
+    _hubContext = hubContext;
   }
 
   [Route("")]
@@ -34,6 +38,9 @@ public class StoresController : ControllerBase
   {
     _dbContext.Stores.Add(store);
     await _dbContext.SaveChangesAsync();
+
+    await _hubContext.Clients.All.SendAsync("refresh");
+
     return store;
   }
 
@@ -66,6 +73,8 @@ public class StoresController : ControllerBase
     storeInDb.name = store.name;
     await _dbContext.SaveChangesAsync();
 
+    await _hubContext.Clients.All.SendAsync("refresh");
+
     return Ok();
   }
 
@@ -81,6 +90,8 @@ public class StoresController : ControllerBase
 
     _dbContext.Stores.Remove(storeInDb);
     await _dbContext.SaveChangesAsync();
+
+    await _hubContext.Clients.All.SendAsync("refresh");
   }
 
   [Route("{storeId}/items")]
@@ -121,6 +132,8 @@ public class StoresController : ControllerBase
     storeInDb.items.Add(item);
     await _dbContext.SaveChangesAsync();
 
+    await _hubContext.Clients.All.SendAsync("refresh");
+
     return Ok(item);
   }
 
@@ -139,6 +152,8 @@ public class StoresController : ControllerBase
     itemInDb.completed = item.completed;
     await _dbContext.SaveChangesAsync();
 
+    await _hubContext.Clients.All.SendAsync("refresh");
+
     return Ok();
   }
 
@@ -155,6 +170,8 @@ public class StoresController : ControllerBase
     itemInDb.selected = selected;
     await _dbContext.SaveChangesAsync();
 
+    await _hubContext.Clients.All.SendAsync("refresh");
+
     return Ok();
   }
 
@@ -170,6 +187,8 @@ public class StoresController : ControllerBase
 
     itemInDb.completed = completed;
     await _dbContext.SaveChangesAsync();
+
+    await _hubContext.Clients.All.SendAsync("refresh");
 
     return Ok();
   }

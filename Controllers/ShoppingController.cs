@@ -28,5 +28,4 @@ public class ShoppingController : ControllerBase
     })
     .ToListAsync();
   }
-
 }

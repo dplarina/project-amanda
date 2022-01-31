@@ -8,9 +8,10 @@ const target = env.ASPNETCORE_HTTPS_PORT
 
 const PROXY_CONFIG = [
   {
-    context: ['/api'],
+    context: ['/api', '/hub'],
     target: target,
-    secure: false
+    secure: false,
+    ws: true
   }
 ];
 

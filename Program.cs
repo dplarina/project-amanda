@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ProjectAmanda.Hubs;
 using ProjectAmanda.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ builder.Services.AddApplicationInsightsTelemetry();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataContext>();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -37,6 +39,11 @@ app.UseRouting();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
+
+app.UseEndpoints(endpoints =>
+{
+  endpoints.MapHub<ChangesHub>("/hub");
+});
 
 app.MapFallbackToFile("index.html"); ;
 

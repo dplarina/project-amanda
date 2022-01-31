@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { retryBackoff } from 'backoff-rxjs';
 import { forkJoin, Subject } from 'rxjs';
 import { catchError, shareReplay, startWith, switchMap } from 'rxjs/operators';
+import { SignalrService } from '../signalr.service';
 import { Store } from '../models/store.interface';
 import { TopNavService } from '../top-nav.service';
 
@@ -48,12 +49,15 @@ export class GroceryListComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private topNav: TopNavService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private changes: SignalrService
   ) {
     this.topNav.updateTopNav('Shopping list', ['shopping']);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.changes.refresh$.subscribe(() => this.refresh$.next());
+  }
 
   onBack(): void {
     this.router.navigate(['/']);

@@ -48,7 +48,8 @@ export class StoreListComponent implements OnInit {
   );
 
   newStoreForm = new FormGroup({
-    name: new FormControl('')
+    name: new FormControl(''),
+    items: new FormControl([])
   });
 
   constructor(

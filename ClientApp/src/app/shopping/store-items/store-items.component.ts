@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatSelectionListChange } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subject } from 'rxjs';
-import { catchError, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { StoreItem } from 'src/app/models/store-item.interface';
 import { Store } from 'src/app/models/store.interface';
+import { SignalrService } from 'src/app/signalr.service';
 import { TopNavService } from 'src/app/top-nav.service';
 
 @Component({
@@ -19,7 +20,7 @@ import { TopNavService } from 'src/app/top-nav.service';
     class: 'app-store-items'
   }
 })
-export class StoreItemsComponent implements OnInit {
+export class StoreItemsComponent implements OnInit, OnDestroy {
   private refresh$ = new Subject();
 
   store$ = this.refresh$.pipe(
@@ -53,14 +54,22 @@ export class StoreItemsComponent implements OnInit {
     completed: new FormControl(false)
   });
 
+  private destroy$ = new Subject();
+
   constructor(
     private http: HttpClient,
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
-    private topNav: TopNavService
+    private topNav: TopNavService,
+    private signalr:SignalrService
   ) {
     this.topNav.updateTopNav('Loading...', ['shopping', 'stores'], true);
+    this.signalr.refresh$.pipe(takeUntil(this.destroy$)).subscribe(() => this.refresh$.next());
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 
   ngOnInit(): void {}
