@@ -81,6 +81,10 @@ export class GroceryListComponent implements OnInit {
     return store.storeId.toString();
   }
 
+  trackByStoreItemId(index: number, item: StoreItem): string {
+    return item.storeItemId.toString();
+  }
+
   compareItems(o1: StoreItem, o2: StoreItem): boolean {
     return o1 && o2 && o1.storeItemId === o2.storeItemId;
   }
