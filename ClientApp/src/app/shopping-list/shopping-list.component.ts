@@ -9,6 +9,7 @@ import { catchError, shareReplay, startWith, switchMap } from 'rxjs/operators';
 import { SignalrService } from '../signalr.service';
 import { Store } from '../models/store.interface';
 import { TopNavService } from '../top-nav.service';
+import { StoreItem } from '../models/store-item.interface';
 
 @Component({
   selector: 'app-shopping-list',
@@ -78,5 +79,9 @@ export class GroceryListComponent implements OnInit {
 
   trackByStoreId(index: number, store: Store): string {
     return store.storeId.toString();
+  }
+
+  compareItems(o1: StoreItem, o2: StoreItem): boolean {
+    return o1 && o2 && o1.storeItemId === o2.storeItemId;
   }
 }
