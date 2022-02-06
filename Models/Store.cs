@@ -1,6 +1,7 @@
 using System.Runtime.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Azure.Data.Tables;
-using Newtonsoft.Json;
 
 namespace ProjectAmanda.Models;
 
@@ -9,20 +10,18 @@ public class Store : StorageTableEntityBase
   public Store()
   {
     this.name = "";
-    this._items = "[]";
   }
   public string name { get; set; }
 
   [JsonIgnore]
-  public string _items;
-
-  [IgnoreDataMember]
-  public List<StoreItem> items
+  public string _items
   {
-    get { return JsonConvert.DeserializeObject<List<StoreItem>>(_items ?? "[]"); }
-    set { _items = JsonConvert.SerializeObject(value ?? new List<StoreItem>()); }
+    get { return JsonSerializer.Serialize(items ?? new List<StoreItem>()); }
+    set { this.items = JsonSerializer.Deserialize<List<StoreItem>>(value ?? "[]"); }
   }
 
+  [IgnoreDataMember]
+  public ICollection<StoreItem> items;
 
   public static Store CreateFromEntity(TableEntity entity)
   {
@@ -32,7 +31,7 @@ public class Store : StorageTableEntityBase
       RowKey = entity.RowKey,
       ETag = entity.ETag,
       name = (string)entity["name"],
-      items = JsonConvert.DeserializeObject<List<StoreItem>>(entity["items"]?.ToString() ?? "[]").ToList()
+      items = JsonSerializer.Deserialize<List<StoreItem>>(entity["items"]?.ToString() ?? "[]").ToList()
     };
   }
 }
