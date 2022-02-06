@@ -1,6 +1,7 @@
+using Azure.Data.Tables;
 using Microsoft.EntityFrameworkCore;
 using ProjectAmanda.Hubs;
-using ProjectAmanda.Models;
+using ProjectAmanda.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,21 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationInsightsTelemetry();
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<DataContext>();
 builder.Services.AddSignalR();
 
+var connectionString = builder.Configuration.GetConnectionString("StorageTables");
+builder.Services.AddSingleton<TableClient>(new TableClient(connectionString, "ProjectAmanda"));
+builder.Services.AddSingleton<TablesService>((services) => new TablesService(services.GetService<TableClient>() ?? throw new ArgumentNullException(nameof(TableClient))));
+
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-  using var dbContext = scope.ServiceProvider.GetService<DataContext>();
-  if (dbContext == null)
-  {
-    throw new Exception("Failed to create database context");
-  }
-
-  dbContext.Database.Migrate();
-}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -45,6 +38,6 @@ app.UseEndpoints(endpoints =>
   endpoints.MapHub<ChangesHub>("/hub");
 });
 
-app.MapFallbackToFile("index.html"); ;
+app.MapFallbackToFile("index.html");
 
 app.Run();

@@ -11,7 +11,7 @@
     <mat-nav-list>
       <mat-list-item *ngFor="let store of stores; trackBy: trackByStoreId">
         <span matLine *ngIf="opts.editing">{{ store.name }}</span>
-        <a matLine [routerLink]="[store.storeId]" *ngIf="!opts.editing">{{ store.name }}</a>
+        <a matLine [routerLink]="[store.name]" *ngIf="!opts.editing">{{ store.name }}</a>
         <button id="deleteBtn" mat-icon-button *ngIf="opts.editing" (click)="deleteStore(store)">
           <mat-icon>delete_outline</mat-icon>
         </button>

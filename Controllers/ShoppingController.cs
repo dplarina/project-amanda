@@ -1,6 +1,9 @@
+using Azure;
+using Azure.Data.Tables;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectAmanda.Models;
+using ProjectAmanda.Services;
 
 namespace ProjectAmanda.Controllers;
 
@@ -8,24 +11,16 @@ namespace ProjectAmanda.Controllers;
 [Route("api/[controller]")]
 public class ShoppingController : ControllerBase
 {
-  private readonly DataContext _dbContext;
-  public ShoppingController(DataContext dbContext)
+  private readonly TablesService _tablesService;
+  public ShoppingController(TablesService tablesService)
   {
-    _dbContext = dbContext;
+    _tablesService = tablesService;
   }
 
   [Route("list")]
   [HttpGet]
-  public async Task<IEnumerable<Store>> GetGroceryList()
+  public IEnumerable<Store> GetGroceryList()
   {
-    return await _dbContext.Stores
-    .Where(s => s.items.Count > 0)
-    .Select(s => new Store
-    {
-      storeId = s.storeId,
-      name = s.name,
-      items = s.items.Where(i => i.selected).OrderBy(i => i.name).ToList()
-    })
-    .ToListAsync();
+    return _tablesService.GetStores();
   }
 }

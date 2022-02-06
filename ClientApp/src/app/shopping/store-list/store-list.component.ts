@@ -74,17 +74,15 @@ export class StoreListComponent implements OnInit {
       name: ''
     });
 
-    this.http
-      .post<Store>('/api/stores', payload)
-      .subscribe((store) => {
-        this.snackBar.open('Store added', 'OK', { duration: 2000 });
-        this.refresh$.next();
-      });
+    this.http.put<Store>(`/api/stores/${payload.name}`, payload).subscribe((store) => {
+      this.snackBar.open('Store added', 'OK', { duration: 2000 });
+      this.refresh$.next();
+    });
   }
 
   deleteStore(store: Store): void {
     if (confirm(`Are you sure you want to delete ${store.name}?`)) {
-      this.http.delete(`/api/stores/${store.storeId}`).subscribe(() => {
+      this.http.delete(`/api/stores/${store.name}`).subscribe(() => {
         this.snackBar.open('Store deleted', 'OK', { duration: 2000 });
         this.refresh$.next();
       });
@@ -96,6 +94,6 @@ export class StoreListComponent implements OnInit {
   }
 
   trackByStoreId(index: number, store: Store): string {
-    return store.storeId.toString();
+    return store.name;
   }
 }

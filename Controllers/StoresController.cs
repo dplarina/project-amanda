@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using ProjectAmanda.Hubs;
 using ProjectAmanda.Models;
+using ProjectAmanda.Services;
 
 namespace ProjectAmanda.Controllers;
 
@@ -10,200 +10,185 @@ namespace ProjectAmanda.Controllers;
 [Route("api/[controller]")]
 public class StoresController : ControllerBase
 {
-  private readonly DataContext _dbContext;
+  private readonly TablesService _tablesService;
   private readonly IHubContext<ChangesHub> _hubContext;
-  public StoresController(DataContext dbContext, IHubContext<ChangesHub> hubContext)
+  public StoresController(TablesService tablesService, IHubContext<ChangesHub> hubContext)
   {
-    _dbContext = dbContext;
+    _tablesService = tablesService;
     _hubContext = hubContext;
   }
 
+
   [Route("")]
   [HttpGet]
-  public async Task<IEnumerable<Store>> GetStoresAsync()
+  public IEnumerable<Store> GetStores()
   {
-    return await _dbContext.Stores.Include(s => s.items)
-    .Select(s => new Store
-    {
-      storeId = s.storeId,
-      name = s.name,
-      items = s.items.OrderBy(i => i.name).ToList()
-    })
-    .ToListAsync();
+    return _tablesService.GetStores();
   }
 
-  [Route("")]
-  [HttpPost]
-  public async Task<Store> CreateStoreAsync([FromBody] Store store)
+  [Route("{name}")]
+  [HttpGet]
+  public async Task<ActionResult<Store>> GetStoreAsync(string name)
   {
-    _dbContext.Stores.Add(store);
-    await _dbContext.SaveChangesAsync();
+    var store = await _tablesService.GetStoreAsync(name);
 
-    await _hubContext.Clients.All.SendAsync("refresh");
+    if (store == null)
+    {
+      return NotFound();
+    }
 
     return store;
   }
 
-  [Route("{id}")]
-  [HttpGet]
-  public async Task<ActionResult<Store>> GetStoreAsync(int id)
-  {
-    var storeInDb = await _dbContext.Stores
-    .Include(s => s.items)
-    .Select(s => new Store
-    {
-      storeId = s.storeId,
-      name = s.name,
-      items = s.items.OrderBy(i => i.name).ToList()
-    })
-    .FirstOrDefaultAsync(store => store.storeId == id);
-    return storeInDb ?? (ActionResult<Store>)NotFound();
-  }
-
-  [Route("{id}")]
+  [Route("{name}")]
   [HttpPut]
-  public async Task<ActionResult> UpdateStoreAsync(int id, Store store)
+  public async Task<ActionResult> UpdateStoreAsync(string name, Store store, CancellationToken cancellationToken = default)
   {
-    var storeInDb = await _dbContext.Stores.FirstOrDefaultAsync(x => x.storeId == id);
-    if (storeInDb == null)
-    {
-      return NotFound();
-    }
+    store.PartitionKey = "Amanda";
+    store.RowKey = name;
 
-    storeInDb.name = store.name;
-    await _dbContext.SaveChangesAsync();
+    await _tablesService.UpsertStoreAsync(store);
 
     await _hubContext.Clients.All.SendAsync("refresh");
 
     return Ok();
   }
 
-  [Route("{id}")]
+  [Route("{name}")]
   [HttpDelete]
-  public async Task DeleteStoreAsync(int id)
+  public async Task DeleteStoreAsync(string name)
   {
-    var storeInDb = await _dbContext.Stores.FirstOrDefaultAsync(x => x.storeId == id);
-    if (storeInDb == null)
-    {
-      return;
-    }
-
-    _dbContext.Stores.Remove(storeInDb);
-    await _dbContext.SaveChangesAsync();
+    await _tablesService.DeleteStoreAsync("Amanda", name);
 
     await _hubContext.Clients.All.SendAsync("refresh");
   }
 
-  [Route("{storeId}/items")]
+  [Route("{name}/items")]
   [HttpGet]
-  public async Task<IEnumerable<StoreItem>> GetStoreItemsAsync(int storeId)
+  public async Task<ActionResult<IEnumerable<StoreItem>>> GetStoreItemsAsync(string name)
   {
-    return await _dbContext.StoreItems
-    .Where(s => s.storeId == storeId)
-    .OrderBy(s => s.name)
-    .ToListAsync();
+    var items = await _tablesService.GetStoreItemsAsync(name);
+    if (items == null)
+    {
+      return NotFound();
+    }
+
+    return items;
   }
 
-  [Route("{storeId}/items/{itemId}")]
+  [Route("{name}/items/{itemName}")]
   [HttpGet]
-  public async Task<ActionResult<StoreItem>> GetStoreItemAsync(int storeId, int itemId)
+  public async Task<ActionResult<StoreItem>> GetStoreItemAsync(string name, string itemName)
   {
-    var itemInDb = await _dbContext.StoreItems.FirstOrDefaultAsync(item => item.storeId == storeId && item.storeItemId == itemId);
-    if (itemInDb == null)
+    var item = await _tablesService.GetStoreItemAsync(name, itemName);
+    if (item == null)
     {
       return NotFound();
     }
 
-    return Ok(itemInDb);
+    return item;
   }
 
-  [Route("{storeId}/items")]
-  [HttpPost]
-  public async Task<ActionResult<StoreItem>> CreateStoreItemAsync(int storeId, [FromBody] StoreItem item)
-  {
-    var storeInDb = await _dbContext.Stores
-    .Include(s => s.items)
-    .FirstOrDefaultAsync(store => store.storeId == storeId);
-    if (storeInDb == null)
-    {
-      return NotFound();
-    }
-
-    storeInDb.items.Add(item);
-    await _dbContext.SaveChangesAsync();
-
-    await _hubContext.Clients.All.SendAsync("refresh");
-
-    return Ok(item);
-  }
-
-  [Route("{storeId}/items/{itemId}")]
+  [Route("{storeName}/items/{itemName}")]
   [HttpPut]
-  public async Task<ActionResult> UpdateStoreItemAsync(int storeId, int itemId, StoreItem item)
+  public async Task<ActionResult> UpsertStoreItemAsync(string storeName, string itemName, StoreItem item)
   {
-    var itemInDb = await _dbContext.StoreItems.FirstOrDefaultAsync(x => x.storeId == storeId && x.storeItemId == itemId);
-    if (itemInDb == null)
+    var store = await _tablesService.GetStoreAsync(storeName);
+    if (store == null)
     {
       return NotFound();
     }
 
-    itemInDb.name = item.name;
-    itemInDb.selected = item.selected;
-    itemInDb.completed = item.completed;
-    await _dbContext.SaveChangesAsync();
+    var existingItem = store.items.Where(i => i.name == itemName).FirstOrDefault();
+    if (existingItem == null)
+    {
+      store.items.Add(item);
+    }
+    else
+    {
+      existingItem.selected = item.selected;
+      existingItem.completed = item.completed;
+    }
+
+    await _tablesService.UpsertStoreAsync(store);
 
     await _hubContext.Clients.All.SendAsync("refresh");
 
     return Ok();
   }
 
-  [Route("{storeId}/items/{itemId}/selected")]
+  [Route("{storeKey}/items/{itemKey}/selected")]
   [HttpPut]
-  public async Task<ActionResult> SetStoreItemSelectedAsync(int storeId, int itemId, [FromBody] bool selected)
+  public async Task<ActionResult> SetStoreItemSelectedAsync(string storeKey, string itemKey, [FromBody] bool selected)
   {
-    var itemInDb = await _dbContext.StoreItems.FirstOrDefaultAsync(x => x.storeId == storeId && x.storeItemId == itemId);
-    if (itemInDb == null)
+    var store = await _tablesService.GetStoreAsync(storeKey);
+    if (store == null)
     {
       return NotFound();
     }
 
-    itemInDb.selected = selected;
-    await _dbContext.SaveChangesAsync();
+    var existingItem = store.items.Where(i => i.name == itemKey).FirstOrDefault();
+    if (existingItem == null)
+    {
+      return NotFound();
+    }
+
+    existingItem.selected = existingItem.selected;
+
+    await _tablesService.UpsertStoreAsync(store);
 
     await _hubContext.Clients.All.SendAsync("refresh");
 
     return Ok();
   }
 
-  [Route("{storeId}/items/{itemId}/completed")]
+  [Route("{storeKey}/items/{itemKey}/completed")]
   [HttpPut]
-  public async Task<ActionResult> SetStoreItemCompeltedAsync(int storeId, int itemId, [FromBody] bool completed)
+  public async Task<ActionResult> SetStoreItemCompletedAsync(string storeKey, string itemKey, [FromBody] bool completed)
   {
-    var itemInDb = await _dbContext.StoreItems.FirstOrDefaultAsync(x => x.storeId == storeId && x.storeItemId == itemId);
-    if (itemInDb == null)
+    var store = await _tablesService.GetStoreAsync(storeKey);
+    if (store == null)
     {
       return NotFound();
     }
 
-    itemInDb.completed = completed;
-    await _dbContext.SaveChangesAsync();
+    var existingItem = store.items.Where(i => i.name == itemKey).FirstOrDefault();
+    if (existingItem == null)
+    {
+      return NotFound();
+    }
+
+    existingItem.completed = existingItem.completed;
+
+    await _tablesService.UpsertStoreAsync(store);
 
     await _hubContext.Clients.All.SendAsync("refresh");
 
     return Ok();
   }
 
-  [Route("{storeId}/items/{itemId}")]
+  [Route("{storeKey}/items/{itemKey}")]
   [HttpDelete]
-  public async Task DeleteStoreItemAsync(int storeId, int itemId)
+  public async Task<ActionResult> DeleteStoreItemAsync(string storeKey, string itemKey)
   {
-    var itemInDb = await _dbContext.StoreItems.FirstOrDefaultAsync(x => x.storeId == storeId && x.storeItemId == itemId);
-    if (itemInDb == null)
+    var store = await _tablesService.GetStoreAsync(storeKey);
+    if (store == null)
     {
-      return;
+      return NotFound();
     }
 
-    _dbContext.StoreItems.Remove(itemInDb);
-    await _dbContext.SaveChangesAsync();
+    foreach (var item in store.items)
+    {
+      if (item.name == itemKey)
+      {
+        store.items.Remove(item);
+      }
+    }
+
+    await _tablesService.UpsertStoreAsync(store);
+
+    await _hubContext.Clients.All.SendAsync("refresh");
+
+    return Ok();
   }
 }

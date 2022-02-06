@@ -62,7 +62,7 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private topNav: TopNavService,
-    private signalr:SignalrService
+    private signalr: SignalrService
   ) {
     this.topNav.updateTopNav({ title: 'Loading...', backRoute: ['shopping', 'stores'], editable: true });
     this.signalr.refresh$.pipe(takeUntil(this.destroy$)).subscribe(() => this.refresh$.next());
@@ -83,10 +83,10 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
 
     this.newItemForm.patchValue({
       name: ''
-    })
+    });
 
     this.http
-      .post<Store>(`/api/stores/${this.route.snapshot.params.storeId}/items`, payload)
+      .put<Store>(`/api/stores/${this.route.snapshot.params.storeId}/items/${payload.name}`, payload)
       .subscribe(() => {
         this.snackBar.open('Item added', 'OK', { duration: 2000 });
         this.refresh$.next();
@@ -95,7 +95,7 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
 
   deleteItem(item: StoreItem): void {
     confirm('Are you sure you want to delete this item?') &&
-      this.http.delete(`/api/stores/${this.route.snapshot.params.storeId}/items/${item.storeItemId}`).subscribe(() => {
+      this.http.delete(`/api/stores/${this.route.snapshot.params.storeId}/items/${item.name}`).subscribe(() => {
         this.refresh$.next();
       });
   }
@@ -108,7 +108,7 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
     forkJoin(
       e.options.map((option) =>
         this.http.put(
-          `/api/stores/${this.route.snapshot.params.storeId}/items/${option.value.storeItemId}/selected`,
+          `/api/stores/${this.route.snapshot.params.storeId}/items/${option.value.name}/selected`,
           option.selected
         )
       )
@@ -118,14 +118,14 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
   }
 
   isSelected(o1: StoreItem, o2: StoreItem): boolean {
-    return o1.storeItemId === o2.storeItemId && o1.selected === o2.selected;
+    return o1.name === o2.name && o1.selected === o2.selected;
   }
 
   trackByStoreItemId(index: number, item: StoreItem): string {
-    return item.storeItemId.toString();
+    return item.name.toString();
   }
 
   compareItems(o1: StoreItem, o2: StoreItem) {
-    return o1 && o2 && o1.storeItemId == o2.storeItemId;
+    return o1 && o2 && o1.name == o2.name;
   }
 }

@@ -10,6 +10,7 @@ import { SignalrService } from '../signalr.service';
 import { Store } from '../models/store.interface';
 import { TopNavService } from '../top-nav.service';
 import { StoreItem } from '../models/store-item.interface';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-shopping-list',
@@ -67,10 +68,7 @@ export class GroceryListComponent implements OnInit {
   selectionChange(e: MatSelectionListChange) {
     forkJoin(
       e.options.map((option) =>
-        this.http.put(
-          `/api/stores/${option.value.storeId}/items/${option.value.storeItemId}/completed`,
-          option.selected
-        )
+        this.http.put(`/api/stores/${option.value.name}/items/${option.value.name}/completed`, option.selected)
       )
     ).subscribe(() => {
       this.refresh$.next();
@@ -78,14 +76,14 @@ export class GroceryListComponent implements OnInit {
   }
 
   trackByStoreId(index: number, store: Store): string {
-    return store.storeId.toString();
+    return store.name.toString();
   }
 
   trackByStoreItemId(index: number, item: StoreItem): string {
-    return item.storeItemId.toString();
+    return item.name.toString();
   }
 
   compareItems(o1: StoreItem, o2: StoreItem): boolean {
-    return o1 && o2 && o1.storeItemId === o2.storeItemId;
+    return o1 && o2 && o1.name === o2.name;
   }
 }

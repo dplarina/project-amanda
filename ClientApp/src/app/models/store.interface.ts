@@ -1,7 +1,10 @@
 import { StoreItem } from './store-item.interface';
 
 export interface Store {
-  storeId: number;
+  PartitionKey: string;
+  RowKey: number;
+  Timestamp: Date;
+  ETag: string;
   name: string;
   items: StoreItem[];
 }
