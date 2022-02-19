@@ -137,7 +137,7 @@ public class StoresController : ControllerBase
       return NotFound();
     }
 
-    existingItem.selected = existingItem.selected;
+    existingItem.selected = selected;
 
     await _tablesService.UpsertStoreAsync(store.ToEntity());
 
@@ -165,7 +165,7 @@ public class StoresController : ControllerBase
       return NotFound();
     }
 
-    existingItem.completed = existingItem.completed;
+    existingItem.completed = completed;
 
     await _tablesService.UpsertStoreAsync(store.ToEntity());
 
