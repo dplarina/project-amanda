@@ -22,8 +22,10 @@ public class ShoppingController : ControllerBase
   [HttpGet]
   public IEnumerable<Store> GetGroceryList()
   {
-    var stores = _tablesService.GetStores().Select(s => s.ToDTO());
-    // for each store filter items to only selected items
+    var stores = _tablesService.GetStores()
+      .Select(s => s.ToDTO())
+      .ToList();
+    // for each store, filter items to only selected items
     foreach (var store in stores)
     {
       store.items = store.items.Where(i => i.selected).ToList();
