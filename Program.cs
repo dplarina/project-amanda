@@ -13,7 +13,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 
 var connectionString = builder.Configuration.GetConnectionString("StorageTables");
-builder.Services.AddSingleton<TableClient>(new TableClient(connectionString, "ProjectAmanda"));
+builder.Services.AddSingleton<TableClient>(new TableClient(connectionString, "Main"));
 builder.Services.AddSingleton<TablesService>((services) => new TablesService(services.GetService<TableClient>() ?? throw new ArgumentNullException(nameof(TableClient))));
 
 var app = builder.Build();
