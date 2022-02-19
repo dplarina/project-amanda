@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using ProjectAmanda.Hubs;
 using ProjectAmanda.Models;
+using ProjectAmanda.Models.DTO;
 using ProjectAmanda.Services;
 
 namespace ProjectAmanda.Controllers;
@@ -23,7 +24,7 @@ public class StoresController : ControllerBase
   [HttpGet]
   public IEnumerable<Store> GetStores()
   {
-    return _tablesService.GetStores();
+    return _tablesService.GetStores().Select(s => s.ToDTO());
   }
 
   [Route("{name}")]
@@ -37,19 +38,16 @@ public class StoresController : ControllerBase
       return NotFound();
     }
 
-    return store;
+    return store.ToDTO();
   }
 
   [Route("{name}")]
   [HttpPut]
-  public async Task<ActionResult> UpdateStoreAsync(string name, Store store, CancellationToken cancellationToken = default)
+  public async Task<ActionResult> UpdateStoreAsync(Store store, CancellationToken cancellationToken = default)
   {
-    store.PartitionKey = "Amanda";
-    store.RowKey = name;
+    await _tablesService.UpsertStoreAsync(store.ToEntity());
 
-    await _tablesService.UpsertStoreAsync(store);
-
-    await _hubContext.Clients.All.SendAsync("refresh");
+    await _hubContext.Clients.All.SendAsync("refresh", cancellationToken);
 
     return Ok();
   }
@@ -89,17 +87,20 @@ public class StoresController : ControllerBase
     return item;
   }
 
-  [Route("{storeName}/items/{itemName}")]
+  [Route("{storeKey}/items/{itemName}")]
   [HttpPut]
-  public async Task<ActionResult> UpsertStoreItemAsync(string storeName, string itemName, StoreItem item)
+  public async Task<ActionResult> UpsertStoreItemAsync(string storeKey, string itemName, StoreItem item)
   {
-    var store = await _tablesService.GetStoreAsync(storeName);
-    if (store == null)
+    var storeEntity = await _tablesService.GetStoreAsync(storeKey);
+
+    if (storeEntity == null)
     {
       return NotFound();
     }
 
-    var existingItem = store.items.Where(i => i.name == itemName).FirstOrDefault();
+    var store = storeEntity.ToDTO();
+
+    var existingItem = store.items.Find(i => i.name == itemName);
     if (existingItem == null)
     {
       store.items.Add(item);
@@ -110,7 +111,7 @@ public class StoresController : ControllerBase
       existingItem.completed = item.completed;
     }
 
-    await _tablesService.UpsertStoreAsync(store);
+    await _tablesService.UpsertStoreAsync(store.ToEntity());
 
     await _hubContext.Clients.All.SendAsync("refresh");
 
@@ -121,13 +122,16 @@ public class StoresController : ControllerBase
   [HttpPut]
   public async Task<ActionResult> SetStoreItemSelectedAsync(string storeKey, string itemKey, [FromBody] bool selected)
   {
-    var store = await _tablesService.GetStoreAsync(storeKey);
-    if (store == null)
+    var storeEntity = await _tablesService.GetStoreAsync(storeKey);
+
+    if (storeEntity == null)
     {
       return NotFound();
     }
 
-    var existingItem = store.items.Where(i => i.name == itemKey).FirstOrDefault();
+    var store = storeEntity.ToDTO();
+
+    var existingItem = store.items.Find(i => i.name == itemKey);
     if (existingItem == null)
     {
       return NotFound();
@@ -135,7 +139,7 @@ public class StoresController : ControllerBase
 
     existingItem.selected = existingItem.selected;
 
-    await _tablesService.UpsertStoreAsync(store);
+    await _tablesService.UpsertStoreAsync(store.ToEntity());
 
     await _hubContext.Clients.All.SendAsync("refresh");
 
@@ -146,13 +150,16 @@ public class StoresController : ControllerBase
   [HttpPut]
   public async Task<ActionResult> SetStoreItemCompletedAsync(string storeKey, string itemKey, [FromBody] bool completed)
   {
-    var store = await _tablesService.GetStoreAsync(storeKey);
-    if (store == null)
+    var storeEntity = await _tablesService.GetStoreAsync(storeKey);
+
+    if (storeEntity == null)
     {
       return NotFound();
     }
 
-    var existingItem = store.items.Where(i => i.name == itemKey).FirstOrDefault();
+    var store = storeEntity.ToDTO();
+
+    var existingItem = store.items.Find(i => i.name == itemKey);
     if (existingItem == null)
     {
       return NotFound();
@@ -160,7 +167,7 @@ public class StoresController : ControllerBase
 
     existingItem.completed = existingItem.completed;
 
-    await _tablesService.UpsertStoreAsync(store);
+    await _tablesService.UpsertStoreAsync(store.ToEntity());
 
     await _hubContext.Clients.All.SendAsync("refresh");
 
@@ -171,21 +178,18 @@ public class StoresController : ControllerBase
   [HttpDelete]
   public async Task<ActionResult> DeleteStoreItemAsync(string storeKey, string itemKey)
   {
-    var store = await _tablesService.GetStoreAsync(storeKey);
-    if (store == null)
+    var storeEntity = await _tablesService.GetStoreAsync(storeKey);
+
+    if (storeEntity == null)
     {
       return NotFound();
     }
 
-    foreach (var item in store.items)
-    {
-      if (item.name == itemKey)
-      {
-        store.items.Remove(item);
-      }
-    }
+    var store = storeEntity.ToDTO();
 
-    await _tablesService.UpsertStoreAsync(store);
+    store.items.RemoveAll(i => i.name == itemKey);
+
+    await _tablesService.UpsertStoreAsync(store.ToEntity());
 
     await _hubContext.Clients.All.SendAsync("refresh");
 

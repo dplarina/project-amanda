@@ -93,7 +93,9 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
       });
   }
 
-  deleteItem(item: StoreItem): void {
+  deleteItem(event: Event, item: StoreItem): void {
+    event.stopPropagation();
+
     confirm('Are you sure you want to delete this item?') &&
       this.http.delete(`/api/stores/${this.route.snapshot.params.storeId}/items/${item.name}`).subscribe(() => {
         this.refresh$.next();

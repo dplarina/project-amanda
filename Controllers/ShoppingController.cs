@@ -3,6 +3,7 @@ using Azure.Data.Tables;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectAmanda.Models;
+using ProjectAmanda.Models.DTO;
 using ProjectAmanda.Services;
 
 namespace ProjectAmanda.Controllers;
@@ -21,6 +22,6 @@ public class ShoppingController : ControllerBase
   [HttpGet]
   public IEnumerable<Store> GetGroceryList()
   {
-    return _tablesService.GetStores();
+    return _tablesService.GetStores().Select(s => s.ToDTO());
   }
 }

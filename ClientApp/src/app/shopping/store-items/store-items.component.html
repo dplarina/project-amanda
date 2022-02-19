@@ -18,7 +18,7 @@
       >
         <div class="option-label">
           <span class="option-label-text">{{ item.name }}</span>
-          <button mat-icon-button (click)="deleteItem(item)" *ngIf="opts.editing">
+          <button mat-icon-button (click)="deleteItem($event, item)" *ngIf="opts.editing">
             <mat-icon>delete_outline</mat-icon>
           </button>
         </div>

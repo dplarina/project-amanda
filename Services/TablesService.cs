@@ -1,6 +1,7 @@
 using Azure;
 using Azure.Data.Tables;
 using ProjectAmanda.Models;
+using ProjectAmanda.Models.DTO;
 
 namespace ProjectAmanda.Services;
 
@@ -13,22 +14,22 @@ public class TablesService
     _tableClient = tableClient;
   }
 
-  public IEnumerable<Store> GetStores()
+  public IEnumerable<StoreEntity> GetStores()
   {
     foreach (var entity in _tableClient.Query<TableEntity>())
     {
-      yield return Store.CreateFromEntity(entity);
+      yield return StoreEntity.CreateFromEntity(entity);
     }
   }
 
-  public async Task<Store?> GetStoreAsync(string name)
+  public async Task<StoreEntity?> GetStoreAsync(string name)
   {
     var response = await _tableClient.GetEntityAsync<TableEntity>("Amanda", name);
 
-    return response?.Value == null ? null : Store.CreateFromEntity(response.Value);
+    return response?.Value == null ? null : StoreEntity.CreateFromEntity(response.Value);
   }
 
-  public async Task UpsertStoreAsync(Store store)
+  public async Task UpsertStoreAsync(StoreEntity store)
   {
     await _tableClient.UpsertEntityAsync(store);
   }
@@ -42,13 +43,13 @@ public class TablesService
   {
     var response = await _tableClient.GetEntityAsync<TableEntity>("Amanda", name);
 
-    return response?.Value == null ? null : Store.CreateFromEntity(response.Value).items.ToList();
+    return response?.Value == null ? null : StoreEntity.CreateFromEntity(response.Value).ToDTO().items.ToList();
   }
 
   public async Task<StoreItem?> GetStoreItemAsync(string name, string itemName)
   {
     var response = await _tableClient.GetEntityAsync<TableEntity>("Amanda", name);
 
-    return response?.Value == null ? null : Store.CreateFromEntity(response.Value).items.FirstOrDefault(i => i.name == itemName);
+    return response?.Value == null ? null : StoreEntity.CreateFromEntity(response.Value).ToDTO().items.FirstOrDefault(i => i.name == itemName);
   }
 }
