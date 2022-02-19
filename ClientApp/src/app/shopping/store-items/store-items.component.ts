@@ -53,7 +53,9 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
     switchMap((value) =>
       this.store$.pipe(
         map((store) =>
-          store.items.filter((item) => !value || item.name.toLowerCase().indexOf(value.toLowerCase()) > -1)
+          store.items
+            .filter((item) => !value || item.name.toLowerCase().indexOf(value.toLowerCase()) > -1)
+            .sort((a, b) => (a.name < b.name ? -1 : 1))
         )
       )
     )

@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { retryBackoff } from 'backoff-rxjs';
 import { forkJoin, Subject } from 'rxjs';
-import { catchError, shareReplay, startWith, switchMap } from 'rxjs/operators';
+import { catchError, map, shareReplay, startWith, switchMap } from 'rxjs/operators';
 import { StoreItem } from '../models/store-item.interface';
 import { Store } from '../models/store.interface';
 import { SignalrService } from '../signalr.service';
@@ -31,6 +31,12 @@ export class GroceryListComponent implements OnInit {
       maxRetries: 5,
       resetOnSuccess: true
     }),
+    map((stores) =>
+      stores.map((store) => {
+        store.items.sort((a, b) => (a.name < b.name ? -1 : 1));
+        return store;
+      })
+    ),
     catchError((err) => {
       console.error(err);
 
