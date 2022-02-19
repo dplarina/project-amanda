@@ -44,8 +44,20 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
     }),
     shareReplay(1)
   );
+
+  searchControl = new FormControl('');
+
   storeName$ = this.store$.pipe(map((store) => store.name));
-  items$ = this.store$.pipe(map((store) => store.items));
+  items$ = this.searchControl.valueChanges.pipe(
+    startWith(''),
+    switchMap((value) =>
+      this.store$.pipe(
+        map((store) =>
+          store.items.filter((item) => !value || item.name.toLowerCase().indexOf(value.toLowerCase()) > -1)
+        )
+      )
+    )
+  );
   editing$ = this.topNav.editing$;
 
   newItemForm = new FormGroup({
@@ -73,6 +85,10 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {}
+
+  clearSearch(): void {
+    this.searchControl.reset();
+  }
 
   addItem(): void {
     if (!this.newItemForm.value.name) {

@@ -5,6 +5,15 @@
 <app-note> Create and check items that you want displayed in the grocery list. </app-note>
 
 <ng-container *ngIf="{ editing: editing$ | async } as opts">
+  <div class="search-container">
+    <mat-form-field appearance="outline">
+      <mat-label>Find an item...</mat-label>
+      <input matInput cdkFocusInitial [formControl]="searchControl" />
+      <mat-icon matSuffix *ngIf="!searchControl.value">search</mat-icon>
+      <mat-icon matSuffix *ngIf="searchControl.value" (click)="clearSearch()">close</mat-icon>
+    </mat-form-field>
+  </div>
+
   <ng-container *ngIf="items$ | async as items">
     <mat-selection-list
       *ngIf="store$ | async as store; else loading"
