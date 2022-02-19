@@ -9,7 +9,7 @@
     <mat-expansion-panel-header>
       <mat-panel-title> {{ store.name }} </mat-panel-title>
     </mat-expansion-panel-header>
-    <mat-selection-list #storeItemList (selectionChange)="selectionChange($event)" [compareWith]="compareItems">
+    <mat-selection-list #storeItemList (selectionChange)="selectionChange(store, $event)" [compareWith]="compareItems">
       <mat-list-option
         *ngFor="let item of store.items; trackBy: trackByStoreItemId"
         [value]="item"

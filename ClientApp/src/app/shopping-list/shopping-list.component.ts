@@ -6,11 +6,10 @@ import { Router } from '@angular/router';
 import { retryBackoff } from 'backoff-rxjs';
 import { forkJoin, Subject } from 'rxjs';
 import { catchError, shareReplay, startWith, switchMap } from 'rxjs/operators';
-import { SignalrService } from '../signalr.service';
-import { Store } from '../models/store.interface';
-import { TopNavService } from '../top-nav.service';
 import { StoreItem } from '../models/store-item.interface';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { Store } from '../models/store.interface';
+import { SignalrService } from '../signalr.service';
+import { TopNavService } from '../top-nav.service';
 
 @Component({
   selector: 'app-shopping-list',
@@ -65,10 +64,10 @@ export class GroceryListComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  selectionChange(e: MatSelectionListChange) {
+  selectionChange(store: Store, e: MatSelectionListChange) {
     forkJoin(
       e.options.map((option) =>
-        this.http.put(`/api/stores/${option.value.name}/items/${option.value.name}/completed`, option.selected)
+        this.http.put(`/api/stores/${store.name}/items/${option.value.name}/completed`, option.selected)
       )
     ).subscribe(() => {
       this.refresh$.next();
