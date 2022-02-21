@@ -1,6 +1,6 @@
 export const ItemCategory = {
-  Bread: 1,
-  Refrigerated: 2,
+  Vegetables: 1,
+  Fruits: 2,
   Kids: 3,
   Frozen: 4,
   'Beverages/Drinks': 5,
@@ -9,5 +9,8 @@ export const ItemCategory = {
   'Beans/Grains/Nuts': 8,
   Pantry: 9,
   Pasta: 10,
-  Snacks: 11
+  Snacks: 11,
+  Bread: 12,
+  Refrigerated: 13,
+  'Fresh herbs': 14
 };
