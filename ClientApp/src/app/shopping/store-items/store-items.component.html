@@ -40,7 +40,7 @@
         <div class="no-items-label" *ngIf="category.items.length === 0">No items in this store. Add one below.</div>
       </mat-selection-list>
 
-      <form (ngSubmit)="addItem()" [formGroup]="newItemForm" *ngIf="opts.editing">
+      <form (ngSubmit)="addItem(category.categoryId)" [formGroup]="newItemForm" *ngIf="opts.editing">
         <div class="add-item-container">
           <mat-form-field appearance="outline">
             <mat-label>New item name</mat-label>

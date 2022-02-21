@@ -121,12 +121,15 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
       });
   }
 
-  addItem(): void {
+  addItem(categoryId: number): void {
     if (!this.newItemForm.value.name) {
       return;
     }
 
-    var payload = this.newItemForm.value;
+    var payload = {
+      ...this.newItemForm.value,
+      categoryId
+    };
 
     this.newItemForm.patchValue({
       name: ''
