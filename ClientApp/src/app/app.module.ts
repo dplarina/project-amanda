@@ -14,6 +14,7 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { ChangeCategoryDialogComponent } from './change-category-dialog/change-category-dialog.component';
 import { HomeComponent } from './home/home.component';
+import { UpdateService } from './update.service';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, ChangeCategoryDialogComponent],
@@ -58,4 +59,8 @@ import { HomeComponent } from './home/home.component';
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule {
+  constructor(updateService: UpdateService) {
+    updateService.init();
+  }
+}

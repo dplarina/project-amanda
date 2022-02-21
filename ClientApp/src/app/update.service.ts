@@ -10,16 +10,18 @@ import { filter, first, map, takeUntil, tap } from 'rxjs/operators';
 export class UpdateService implements OnDestroy {
   private destroy$ = new Subject();
 
-  constructor(appRef: ApplicationRef, updates: SwUpdate, private snackBar: MatSnackBar) {
+  constructor(private appRef: ApplicationRef, private updates: SwUpdate, private snackBar: MatSnackBar) {}
+
+  init(): void {
     // Allow the app to stabilize first, before starting
     // polling for updates with `interval()`.
-    const appIsStable$ = appRef.isStable.pipe(first((isStable) => isStable === true));
+    const appIsStable$ = this.appRef.isStable.pipe(first((isStable) => isStable === true));
     const everyMinute$ = interval(1 * 1 * 1000);
     const everyMinuteOnceAppIsStable$ = concat(appIsStable$, everyMinute$);
 
-    everyMinuteOnceAppIsStable$.subscribe(() => updates.checkForUpdate());
+    everyMinuteOnceAppIsStable$.subscribe(() => this.updates.checkForUpdate());
 
-    updates.versionUpdates
+    this.updates.versionUpdates
       .pipe(
         filter((evt): evt is VersionReadyEvent => evt.type === 'VERSION_READY'),
         map((evt) => ({
@@ -31,7 +33,7 @@ export class UpdateService implements OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(() => {
-        updates.activateUpdate();
+        this.updates.activateUpdate();
         // notify the user of a code update
         this.snackBar.open('Update available', 'Reload', {
           duration: 5000
