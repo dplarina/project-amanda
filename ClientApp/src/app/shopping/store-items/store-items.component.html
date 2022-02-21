@@ -67,7 +67,7 @@
           <div class="option-label">
             <span class="option-label-text">{{ item.name }}</span>
             <ng-container *ngIf="opts.editingCategoryId == category.categoryId">
-              <button mat-button (click)="changeCategory(item, $event)">CHANGE</button>
+              <button mat-button (click)="changeCategory(item, $event)">CATEGORY</button>
               <button mat-icon-button (click)="deleteItem($event, item)">
                 <mat-icon>delete_outline</mat-icon>
               </button>
