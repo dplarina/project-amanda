@@ -14,7 +14,7 @@ export class UpdateService implements OnDestroy {
     // Allow the app to stabilize first, before starting
     // polling for updates with `interval()`.
     const appIsStable$ = appRef.isStable.pipe(first((isStable) => isStable === true));
-    const everyMinute$ = interval(1 * 5 * 1000);
+    const everyMinute$ = interval(1 * 1 * 1000);
     const everyMinuteOnceAppIsStable$ = concat(appIsStable$, everyMinute$);
 
     everyMinuteOnceAppIsStable$.subscribe(() => updates.checkForUpdate());
