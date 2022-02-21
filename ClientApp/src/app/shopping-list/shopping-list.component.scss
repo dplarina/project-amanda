@@ -13,7 +13,7 @@
         overflow: unset;
         .mat-expansion-panel-header {
           background-color: mat-color($accentPalette);
-          z-index: 1;
+          z-index: 2;
           top: 0;
           position: sticky;
           .mat-expansion-panel-header-title {
