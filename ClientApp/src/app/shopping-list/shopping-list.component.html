@@ -7,7 +7,13 @@
 <mat-accordion *ngIf="stores$ | async as stores; else loading">
   <mat-expansion-panel [expanded]="i === 0" *ngFor="let store of stores; trackBy: trackByStoreId; index as i">
     <mat-expansion-panel-header>
-      <mat-panel-title> {{ store.name }} </mat-panel-title>
+      <mat-panel-title>
+        {{ store.name }}
+        <span fxFlex></span>
+        <button class="store-edit-btn" mat-icon-button [routerLink]="['stores', store.name]">
+          <mat-icon>settings</mat-icon>
+        </button>
+      </mat-panel-title>
     </mat-expansion-panel-header>
     <div *ngFor="let category of store.categories">
       <ng-container *ngIf="category.items.length > 0">
