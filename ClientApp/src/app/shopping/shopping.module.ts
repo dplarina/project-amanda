@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -32,7 +33,9 @@ import { StoreListComponent } from './store-list/store-list.component';
     MatFormFieldModule,
     MatProgressBarModule,
     MatToolbarModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+
+    FlexLayoutModule
   ]
 })
 export class ShoppingModule {}
