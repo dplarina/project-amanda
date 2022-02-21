@@ -33,16 +33,20 @@ export class GroceryListComponent implements OnInit {
       resetOnSuccess: true
     }),
     map((stores) =>
-      stores.map((store) => ({
-        ...store,
-        categories: Object.entries(ItemCategory).map(([name, categoryId]) => ({
-          id: +categoryId,
-          name: name,
-          items: store.items
-            .filter((item) => (!item.categoryId && categoryId == 1) || item.categoryId == categoryId)
-            .sort((a, b) => (a.name < b.name ? -1 : 1))
+      stores
+        .map((store) => ({
+          ...store,
+          categories: Object.entries(ItemCategory)
+            .map(([name, categoryId]) => ({
+              id: +categoryId,
+              name: name,
+              items: store.items
+                .filter((item) => (!item.categoryId && categoryId == 1) || item.categoryId == categoryId)
+                .sort((a, b) => (a.name < b.name ? -1 : 1))
+            }))
+            .filter((category) => category.items.length > 0)
         }))
-      }))
+        .filter((store) => store.categories.length > 0)
     ),
     catchError((err) => {
       console.error(err);
