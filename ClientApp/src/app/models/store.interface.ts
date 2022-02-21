@@ -6,5 +6,6 @@ export interface Store {
   Timestamp: Date;
   ETag: string;
   name: string;
+  categories: { [key: string]: StoreItem[] };
   items: StoreItem[];
 }

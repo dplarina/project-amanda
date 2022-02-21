@@ -1,56 +1,59 @@
-<ng-template #loading>
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-</ng-template>
+<div class="store-items-container">
+  <ng-template #loading>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </ng-template>
 
-<app-note> Create and check items that you want displayed in the grocery list. </app-note>
+  <app-note> Create and check items that you want displayed in the grocery list. </app-note>
 
-<ng-container *ngIf="{ editing: editing$ | async } as opts">
-  <div class="search-container">
-    <mat-form-field appearance="outline">
-      <mat-label>Find an item...</mat-label>
-      <input matInput cdkFocusInitial [formControl]="searchControl" />
-      <mat-icon matSuffix *ngIf="!searchControl.value">search</mat-icon>
-      <mat-icon matSuffix *ngIf="searchControl.value" (click)="clearSearch()">close</mat-icon>
-    </mat-form-field>
-  </div>
+  <ng-container *ngIf="{ editing: editing$ | async } as opts">
+    <div class="search-container">
+      <mat-form-field appearance="outline">
+        <mat-label>Find an item...</mat-label>
+        <input matInput cdkFocusInitial [formControl]="searchControl" />
+        <mat-icon matSuffix *ngIf="!searchControl.value">search</mat-icon>
+        <mat-icon matSuffix *ngIf="searchControl.value" (click)="clearSearch()">close</mat-icon>
+      </mat-form-field>
+    </div>
 
-  <ng-container *ngIf="items$ | async as items">
-    <mat-selection-list
-      *ngIf="store$ | async as store; else loading"
-      [compareWith]="compareItems"
-      (selectionChange)="selectionChange($event)"
-    >
-      <mat-list-option
-        *ngFor="let item of items; trackBy: trackByStoreItemId"
-        [value]="item"
-        [selected]="item.selected"
+    <div *ngFor="let category of categories$ | async">
+      <h2 class="category-name">{{ category.name }}</h2>
+      <mat-selection-list
+        *ngIf="store$ | async as store; else loading"
+        [compareWith]="compareItems"
+        (selectionChange)="selectionChange($event)"
       >
-        <div class="option-label">
-          <span class="option-label-text">{{ item.name }}</span>
-          <button mat-icon-button (click)="deleteItem($event, item)" *ngIf="opts.editing">
-            <mat-icon>delete_outline</mat-icon>
+        <mat-list-option
+          *ngFor="let item of category.items; trackBy: trackByStoreItemId"
+          [value]="item"
+          [selected]="item.selected"
+        >
+          <div class="option-label">
+            <span class="option-label-text">{{ item.name }}</span>
+            <button mat-icon-button (click)="deleteItem($event, item)" *ngIf="opts.editing">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        </mat-list-option>
+        <div class="no-items-label" *ngIf="category.items.length === 0">No items in this store. Add one below.</div>
+      </mat-selection-list>
+
+      <form (ngSubmit)="addItem()" [formGroup]="newItemForm" *ngIf="opts.editing">
+        <div class="add-item-container">
+          <mat-form-field appearance="outline">
+            <mat-label>New item name</mat-label>
+            <input
+              matInput
+              cdkFocusInitial
+              placeholder="Oreos or something..."
+              formControlName="name"
+              (keydown)="$event.stopPropagation()"
+            />
+          </mat-form-field>
+          <button id="addItemBtn" mat-icon-button color="accent">
+            <mat-icon>add</mat-icon>
           </button>
         </div>
-      </mat-list-option>
-      <div class="no-items-label" *ngIf="items.length === 0">No items in this store. Add one below.</div>
-    </mat-selection-list>
-
-    <form (ngSubmit)="addItem()" [formGroup]="newItemForm" *ngIf="opts.editing">
-      <div class="add-item-container">
-        <mat-form-field appearance="outline">
-          <mat-label>New item name</mat-label>
-          <input
-            matInput
-            cdkFocusInitial
-            placeholder="Oreos or something..."
-            formControlName="name"
-            (keydown)="$event.stopPropagation()"
-          />
-        </mat-form-field>
-        <button id="addItemBtn" mat-icon-button color="accent">
-          <mat-icon>add</mat-icon>
-        </button>
-      </div>
-    </form>
+      </form>
+    </div>
   </ng-container>
-</ng-container>
+</div>

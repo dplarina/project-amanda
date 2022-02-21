@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subject } from 'rxjs';
 import { catchError, map, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { ItemCategory } from 'src/app/enums';
 import { StoreItem } from 'src/app/models/store-item.interface';
 import { Store } from 'src/app/models/store.interface';
 import { SignalrService } from 'src/app/signalr.service';
@@ -48,14 +49,22 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
   searchControl = new FormControl('');
 
   storeName$ = this.store$.pipe(map((store) => store.name));
-  items$ = this.searchControl.valueChanges.pipe(
+  categories$ = this.searchControl.valueChanges.pipe(
     startWith(''),
-    switchMap((value) =>
+    switchMap((query) =>
       this.store$.pipe(
         map((store) =>
-          store.items
-            .filter((item) => !value || item.name.toLowerCase().indexOf(value.toLowerCase()) > -1)
-            .sort((a, b) => (a.name < b.name ? -1 : 1))
+          Object.entries(ItemCategory).map(([name, categoryId]) => ({
+            id: +categoryId,
+            name: name,
+            items: store.items
+              .filter(
+                (item) =>
+                  (!query || item.name.toLowerCase().indexOf(query.toLowerCase()) > -1) &&
+                  ((!item.categoryId && categoryId == 1) || item.categoryId == categoryId)
+              )
+              .sort((a, b) => (a.name < b.name ? -1 : 1))
+          }))
         )
       )
     )

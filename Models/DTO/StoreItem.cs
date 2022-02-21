@@ -7,6 +7,7 @@ public class StoreItem
     this.name = name;
   }
   public string name { get; set; }
+  public int categoryId { get; set; }
   public bool selected { get; set; }
   public bool completed { get; set; }
 }
