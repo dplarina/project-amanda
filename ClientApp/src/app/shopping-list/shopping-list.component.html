@@ -10,20 +10,22 @@
       <mat-panel-title> {{ store.name }} </mat-panel-title>
     </mat-expansion-panel-header>
     <div *ngFor="let category of store.categories">
-      <h3 class="category-name">{{ category.name }}</h3>
-      <mat-selection-list
-        #storeItemList
-        (selectionChange)="selectionChange(store, $event)"
-        [compareWith]="compareItems"
-      >
-        <mat-list-option
-          *ngFor="let item of category.items; trackBy: trackByStoreItemId"
-          [value]="item"
-          [selected]="item.completed"
+      <ng-container *ngIf="category.items.length > 0">
+        <h3 class="category-name">{{ category.name }}</h3>
+        <mat-selection-list
+          #storeItemList
+          (selectionChange)="selectionChange(store, $event)"
+          [compareWith]="compareItems"
         >
-          {{ item.name }}
-        </mat-list-option>
-      </mat-selection-list>
+          <mat-list-option
+            *ngFor="let item of category.items; trackBy: trackByStoreItemId"
+            [value]="item"
+            [selected]="item.completed"
+          >
+            {{ item.name }}
+          </mat-list-option>
+        </mat-selection-list>
+      </ng-container>
     </div>
   </mat-expansion-panel>
 </mat-accordion>
