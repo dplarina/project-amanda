@@ -4,7 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatSelectionListChange } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Subject } from 'rxjs';
+import { BehaviorSubject, forkJoin, Subject } from 'rxjs';
 import { catchError, map, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ChangeCategoryDialogService } from 'src/app/change-category-dialog/change-category-dialog.service';
 import { ItemCategory } from 'src/app/enums';
@@ -71,7 +71,8 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
       )
     )
   );
-  editing$ = this.topNav.editing$;
+
+  editingCategoryId$ = new BehaviorSubject<number | null>(null);
 
   newItemForm = new FormGroup({
     name: new FormControl(''),
@@ -90,7 +91,7 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
     private signalr: SignalrService,
     private changeCategoryDialog: ChangeCategoryDialogService
   ) {
-    this.topNav.updateTopNav({ title: 'Loading...', backRoute: ['shopping', 'stores'], editable: true });
+    this.topNav.updateTopNav({ title: 'Loading...', backRoute: ['shopping', 'stores'] });
     this.signalr.refresh$.pipe(takeUntil(this.destroy$)).subscribe(() => this.refresh$.next());
   }
 
@@ -119,6 +120,16 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
             });
         }
       });
+  }
+
+  toggleEdit(categoryId: number): void {
+    // if we're editing the selected category, stop
+    if (this.editingCategoryId$.value === categoryId) {
+      this.editingCategoryId$.next(null);
+      return;
+    }
+
+    this.editingCategoryId$.next(categoryId);
   }
 
   addItem(categoryId: number): void {
