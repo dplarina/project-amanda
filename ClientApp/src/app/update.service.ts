@@ -13,6 +13,10 @@ export class UpdateService implements OnDestroy {
   constructor(private appRef: ApplicationRef, private updates: SwUpdate, private snackBar: MatSnackBar) {}
 
   init(): void {
+    // if service worker is not available, then do nothing
+    if (!this.updates.isEnabled) {
+      return;
+    }
     // Allow the app to stabilize first, before starting
     // polling for updates with `interval()`.
     const appIsStable$ = this.appRef.isStable.pipe(first((isStable) => isStable === true));
