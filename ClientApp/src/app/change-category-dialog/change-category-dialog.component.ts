@@ -10,10 +10,12 @@ import { ItemCategory } from '../enums';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChangeCategoryDialogComponent implements OnInit {
-  categories = Object.entries(ItemCategory).map(([name, categoryId]) => ({
-    id: +categoryId,
-    name: name
-  }));
+  categories = Object.entries(ItemCategory)
+    .map(([name, categoryId]) => ({
+      id: +categoryId,
+      name: name
+    }))
+    .sort((a, b) => (a.name < b.name ? -1 : 1));
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public categoryId: number,
