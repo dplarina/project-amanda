@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subject } from 'rxjs';
 import { catchError, map, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { ChangeCategoryDialogService } from 'src/app/change-category-dialog/change-category-dialog.service';
 import { ItemCategory } from 'src/app/enums';
 import { StoreItem } from 'src/app/models/store-item.interface';
 import { Store } from 'src/app/models/store.interface';
@@ -55,7 +56,7 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
       this.store$.pipe(
         map((store) =>
           Object.entries(ItemCategory).map(([name, categoryId]) => ({
-            id: +categoryId,
+            categoryId: +(categoryId ?? 1),
             name: name,
             items: store.items
               .filter(
@@ -63,6 +64,7 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
                   (!query || item.name.toLowerCase().indexOf(query.toLowerCase()) > -1) &&
                   ((!item.categoryId && categoryId == 1) || item.categoryId == categoryId)
               )
+              .map((item) => ({ ...item, categoryId: +(item.categoryId ?? 1) }))
               .sort((a, b) => (a.name < b.name ? -1 : 1))
           }))
         )
@@ -85,7 +87,8 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private topNav: TopNavService,
-    private signalr: SignalrService
+    private signalr: SignalrService,
+    private changeCategoryDialog: ChangeCategoryDialogService
   ) {
     this.topNav.updateTopNav({ title: 'Loading...', backRoute: ['shopping', 'stores'], editable: true });
     this.signalr.refresh$.pipe(takeUntil(this.destroy$)).subscribe(() => this.refresh$.next());
@@ -99,6 +102,23 @@ export class StoreItemsComponent implements OnInit, OnDestroy {
 
   clearSearch(): void {
     this.searchControl.reset();
+  }
+
+  changeCategory(item: StoreItem, event: Event): void {
+    event.stopPropagation();
+
+    this.changeCategoryDialog
+      .open(item.categoryId)
+      .afterClosed()
+      .subscribe((categoryId) => {
+        if (categoryId) {
+          this.http
+            .put(`/api/stores/${this.route.snapshot.params.storeId}/items/${item.name}/category`, categoryId)
+            .subscribe(() => {
+              this.refresh$.next();
+            });
+        }
+      });
   }
 
   addItem(): void {

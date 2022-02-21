@@ -174,6 +174,34 @@ public class StoresController : ControllerBase
     return Ok();
   }
 
+  [Route("{storeKey}/items/{itemKey}/category")]
+  [HttpPut]
+  public async Task<ActionResult> SetStoreItemCategoryAsync(string storeKey, string itemKey, [FromBody] int categoryId)
+  {
+    var storeEntity = await _tablesService.GetStoreAsync(storeKey);
+
+    if (storeEntity == null)
+    {
+      return NotFound();
+    }
+
+    var store = storeEntity.ToDTO();
+
+    var existingItem = store.items.Find(i => i.name == itemKey);
+    if (existingItem == null)
+    {
+      return NotFound();
+    }
+
+    existingItem.categoryId = categoryId;
+
+    await _tablesService.UpsertStoreAsync(store.ToEntity());
+
+    await _hubContext.Clients.All.SendAsync("refresh");
+
+    return Ok();
+  }
+
   [Route("{storeKey}/items/{itemKey}")]
   [HttpDelete]
   public async Task<ActionResult> DeleteStoreItemAsync(string storeKey, string itemKey)

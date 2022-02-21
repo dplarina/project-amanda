@@ -29,9 +29,12 @@
         >
           <div class="option-label">
             <span class="option-label-text">{{ item.name }}</span>
-            <button mat-icon-button (click)="deleteItem($event, item)" *ngIf="opts.editing">
-              <mat-icon>delete_outline</mat-icon>
-            </button>
+            <ng-container *ngIf="opts.editing">
+              <button mat-button (click)="changeCategory(item, $event)">CHANGE</button>
+              <button mat-icon-button (click)="deleteItem($event, item)">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </ng-container>
           </div>
         </mat-list-option>
         <div class="no-items-label" *ngIf="category.items.length === 0">No items in this store. Add one below.</div>

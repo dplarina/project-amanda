@@ -19,10 +19,12 @@ public class StoreEntity : ITableEntity
 
   public Store ToDTO()
   {
+    var items = JsonSerializer.Deserialize<List<StoreItem>>(Items);
+    items.ForEach(i => { i.categoryId = i.categoryId == 0 ? 1 : i.categoryId; });
     return new Store()
     {
       name = Name,
-      items = JsonSerializer.Deserialize<List<StoreItem>>(Items)
+      items = items
     };
   }
 
