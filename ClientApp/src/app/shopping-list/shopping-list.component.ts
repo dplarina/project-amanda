@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { retryBackoff } from 'backoff-rxjs';
 import { forkJoin, Subject } from 'rxjs';
 import { catchError, map, shareReplay, startWith, switchMap } from 'rxjs/operators';
+import { ItemCategory } from '../enums';
 import { StoreItem } from '../models/store-item.interface';
 import { Store } from '../models/store.interface';
 import { SignalrService } from '../signalr.service';
@@ -32,10 +33,16 @@ export class GroceryListComponent implements OnInit {
       resetOnSuccess: true
     }),
     map((stores) =>
-      stores.map((store) => {
-        store.items.sort((a, b) => (a.name < b.name ? -1 : 1));
-        return store;
-      })
+      stores.map((store) => ({
+        ...store,
+        categories: Object.entries(ItemCategory).map(([name, categoryId]) => ({
+          id: +categoryId,
+          name: name,
+          items: store.items
+            .filter((item) => (!item.categoryId && categoryId == 1) || item.categoryId == categoryId)
+            .sort((a, b) => (a.name < b.name ? -1 : 1))
+        }))
+      }))
     ),
     catchError((err) => {
       console.error(err);
