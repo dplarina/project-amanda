@@ -102,7 +102,4 @@
       </ng-container>
     </ng-container>
   </div>
-  <ng-container *ngIf="!(categories$ | async).some(c => c.items.length > 0) && searchControl.value">
-    <div class="no-items-label">No items found</div>
-  </ng-container>
 </div>
