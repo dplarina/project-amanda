@@ -15,89 +15,94 @@
   </div>
 
   <div *ngFor="let category of categories$ | async">
-    <ng-container *ngIf="{ editingCategoryId: editingCategoryId$ | async } as opts">
-      <h2 class="category-name">
-        {{ category.name }}
-        <span fxFlex></span>
-        <button mat-icon-button id="editBtn" (click)="toggleEdit(category.categoryId)">
-          <mat-icon>
-            <svg *ngIf="opts.editingCategoryId != category.categoryId" viewBox="0 0 24 24">
-              <g><rect fill="none" height="24" width="24" /></g>
-              <g>
+    <ng-container *ngIf="category.items.length > 0 || !searchControl.value">
+      <ng-container *ngIf="{ editingCategoryId: editingCategoryId$ | async } as opts">
+        <h2 class="category-name">
+          {{ category.name }}
+          <span fxFlex></span>
+          <button mat-icon-button id="editBtn" (click)="toggleEdit(category.categoryId)">
+            <mat-icon>
+              <svg *ngIf="opts.editingCategoryId != category.categoryId" viewBox="0 0 24 24">
+                <g><rect fill="none" height="24" width="24" /></g>
                 <g>
                   <g>
-                    <path
-                      d="M3,21l3.75,0L17.81,9.94l-3.75-3.75L3,17.25L3,21z M5,18.08l9.06-9.06l0.92,0.92L5.92,19L5,19L5,18.08z"
-                    />
-                  </g>
-                  <g>
-                    <path
-                      d="M18.37,3.29c-0.39-0.39-1.02-0.39-1.41,0l-1.83,1.83l3.75,3.75l1.83-1.83c0.39-0.39,0.39-1.02,0-1.41L18.37,3.29z"
-                    />
+                    <g>
+                      <path
+                        d="M3,21l3.75,0L17.81,9.94l-3.75-3.75L3,17.25L3,21z M5,18.08l9.06-9.06l0.92,0.92L5.92,19L5,19L5,18.08z"
+                      />
+                    </g>
+                    <g>
+                      <path
+                        d="M18.37,3.29c-0.39-0.39-1.02-0.39-1.41,0l-1.83,1.83l3.75,3.75l1.83-1.83c0.39-0.39,0.39-1.02,0-1.41L18.37,3.29z"
+                      />
+                    </g>
                   </g>
                 </g>
-              </g>
-            </svg>
-            <svg *ngIf="opts.editingCategoryId == category.categoryId" viewBox="0 0 24 24">
-              <g><rect fill="none" height="24" width="24" /></g>
-              <g>
+              </svg>
+              <svg *ngIf="opts.editingCategoryId == category.categoryId" viewBox="0 0 24 24">
+                <g><rect fill="none" height="24" width="24" /></g>
                 <g>
-                  <g><polygon points="3,17.25 3,21 6.75,21 17.81,9.94 14.06,6.19" /></g>
                   <g>
-                    <path
-                      d="M20.71,5.63l-2.34-2.34c-0.39-0.39-1.02-0.39-1.41,0l-1.83,1.83l3.75,3.75l1.83-1.83C21.1,6.65,21.1,6.02,20.71,5.63z"
-                    />
+                    <g><polygon points="3,17.25 3,21 6.75,21 17.81,9.94 14.06,6.19" /></g>
+                    <g>
+                      <path
+                        d="M20.71,5.63l-2.34-2.34c-0.39-0.39-1.02-0.39-1.41,0l-1.83,1.83l3.75,3.75l1.83-1.83C21.1,6.65,21.1,6.02,20.71,5.63z"
+                      />
+                    </g>
                   </g>
                 </g>
-              </g>
-            </svg>
-          </mat-icon>
-        </button>
-      </h2>
-      <mat-selection-list
-        *ngIf="store$ | async as store; else loading"
-        [compareWith]="compareItems"
-        (selectionChange)="selectionChange($event)"
-      >
-        <mat-list-option
-          *ngFor="let item of category.items; trackBy: trackByStoreItemId"
-          [value]="item"
-          [selected]="item.selected"
-        >
-          <div class="option-label">
-            <span class="option-label-text">{{ item.name }}</span>
-            <ng-container *ngIf="opts.editingCategoryId == category.categoryId">
-              <button mat-button (click)="changeCategory(item, $event)">CATEGORY</button>
-              <button mat-icon-button (click)="deleteItem($event, item)">
-                <mat-icon>delete_outline</mat-icon>
-              </button>
-            </ng-container>
-          </div>
-        </mat-list-option>
-        <div class="no-items-label" *ngIf="category.items.length === 0">No items in this category</div>
-      </mat-selection-list>
-
-      <form
-        (ngSubmit)="addItem(category.categoryId)"
-        [formGroup]="newItemForm"
-        *ngIf="opts.editingCategoryId == category.categoryId"
-      >
-        <div class="add-item-container">
-          <mat-form-field appearance="outline">
-            <mat-label>New item name</mat-label>
-            <input
-              matInput
-              cdkFocusInitial
-              placeholder="Oreos or something..."
-              formControlName="name"
-              (keydown)="$event.stopPropagation()"
-            />
-          </mat-form-field>
-          <button id="addItemBtn" mat-icon-button color="accent">
-            <mat-icon>add</mat-icon>
+              </svg>
+            </mat-icon>
           </button>
-        </div>
-      </form>
+        </h2>
+        <mat-selection-list
+          *ngIf="store$ | async as store; else loading"
+          [compareWith]="compareItems"
+          (selectionChange)="selectionChange($event)"
+        >
+          <mat-list-option
+            *ngFor="let item of category.items; trackBy: trackByStoreItemId"
+            [value]="item"
+            [selected]="item.selected"
+          >
+            <div class="option-label">
+              <span class="option-label-text">{{ item.name }}</span>
+              <ng-container *ngIf="opts.editingCategoryId == category.categoryId">
+                <button mat-button (click)="changeCategory(item, $event)">CATEGORY</button>
+                <button mat-icon-button (click)="deleteItem($event, item)">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </ng-container>
+            </div>
+          </mat-list-option>
+          <div class="no-items-label" *ngIf="category.items.length === 0">No items in this category</div>
+        </mat-selection-list>
+
+        <form
+          (ngSubmit)="addItem(category.categoryId)"
+          [formGroup]="newItemForm"
+          *ngIf="opts.editingCategoryId == category.categoryId"
+        >
+          <div class="add-item-container">
+            <mat-form-field appearance="outline">
+              <mat-label>New item name</mat-label>
+              <input
+                matInput
+                cdkFocusInitial
+                placeholder="Oreos or something..."
+                formControlName="name"
+                (keydown)="$event.stopPropagation()"
+              />
+            </mat-form-field>
+            <button id="addItemBtn" mat-icon-button color="accent">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </form>
+      </ng-container>
     </ng-container>
   </div>
+  <ng-container *ngIf="!(categories$ | async).some(c => c.items.length > 0) && searchControl.value">
+    <div class="no-items-label">No items found</div>
+  </ng-container>
 </div>
