@@ -130,8 +130,9 @@ form {
     border-bottom: solid 2px #1967d2;
   }
 
-  &.completed {
+  &.completed .list-item-name {
     text-decoration: line-through;
+    color: rgba(0, 0, 0, 0.3);
   }
 
   .mat-form-field {
@@ -143,8 +144,13 @@ form {
   }
 }
 
+.delete-list-item-button {
+  margin-right: -8px;
+}
+
 .list-item-drag-icon {
   color: rgba(0, 0, 0, 0.67);
+  margin-right: 16px;
 }
 
 .list-item-checkbox {

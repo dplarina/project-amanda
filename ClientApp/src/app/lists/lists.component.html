@@ -47,29 +47,32 @@
           cdkDragLockAxis="y"
           cdkDrag
         >
+          <mat-icon cdkDragHandle class="list-item-drag-icon" (click)="$event.stopPropagation()"
+            >drag_indicator</mat-icon
+          >
           <mat-checkbox
             class="list-item-checkbox"
             (click)="$event.stopPropagation()"
             [checked]="item.completed"
             [(ngModel)]="item.completed"
+            (change)="saveListItem(list)"
           ></mat-checkbox>
 
           <span class="list-item-name" *ngIf="opts.editingItem !== item">{{ item.name }}</span>
           <form #form="ngForm" (ngSubmit)="saveListItem(list, item, form)" novalidate *ngIf="opts.editingItem === item">
             <div class="list-item-editor">
               <input id="editNameInput" name="name" matInput [(ngModel)]="editItemName" required />
-              <button mat-icon-button color="accent" type="submit" (click)="$event.stopPropagation()">
-                <mat-icon>check</mat-icon>
-              </button>
 
-              <button mat-icon-button color="accent" (click)="deleteListItem($event, list, item)">
-                <mat-icon>delete_outline</mat-icon>
+              <button
+                class="delete-list-item-button"
+                mat-icon-button
+                color="accent"
+                (click)="deleteListItem($event, list, item)"
+              >
+                <mat-icon>close</mat-icon>
               </button>
             </div>
           </form>
-          <mat-icon cdkDragHandle class="list-item-drag-icon" (click)="$event.stopPropagation()"
-            >drag_indicator</mat-icon
-          >
         </mat-list-item>
       </ng-container>
     </mat-list>

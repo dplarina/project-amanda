@@ -104,11 +104,9 @@ export class ListsComponent implements OnInit, OnDestroy {
   }
   deleteListItem(event: Event, list: List, item: ListItem): void {
     event.stopPropagation();
-    if (confirm(`Are you sure you want to delete "${item.name}"?`)) {
-      list.items = list.items.filter((i) => i.name !== item.name);
+    list.items = list.items.filter((i) => i.name !== item.name);
 
-      this.saveListItem(list, item);
-    }
+    this.saveListItem(list, item);
   }
 
   drop(event: CdkDragDrop<ListItem[]>, list: List) {
