@@ -62,12 +62,14 @@
                 <mat-icon>check</mat-icon>
               </button>
 
-              <button mat-icon-button color="accent" (click)="deleteListItem(list, item)">
+              <button mat-icon-button color="accent" (click)="deleteListItem($event, list, item)">
                 <mat-icon>delete_outline</mat-icon>
               </button>
             </div>
           </form>
-          <mat-icon cdkDragHandle class="list-item-drag-icon">drag_indicator</mat-icon>
+          <mat-icon cdkDragHandle class="list-item-drag-icon" (click)="$event.stopPropagation()"
+            >drag_indicator</mat-icon
+          >
         </mat-list-item>
       </ng-container>
     </mat-list>

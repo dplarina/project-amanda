@@ -1,15 +1,16 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { catchError, tap, shareReplay } from 'rxjs/operators';
+import { catchError, tap, shareReplay, takeUntil, startWith, switchMap } from 'rxjs/operators';
 import { List } from 'src/app/models/list.interface';
 import { TopNavService } from 'src/app/top-nav.service';
 import { retryBackoff } from 'backoff-rxjs';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { ListItem } from '../models/list-item.interface';
 import { NgForm } from '@angular/forms';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ItemCategory } from '../enums';
+import { SignalrService } from '../signalr.service';
 
 @Component({
   selector: 'app-lists',
@@ -20,8 +21,12 @@ import { ItemCategory } from '../enums';
     class: 'app-lists'
   }
 })
-export class ListsComponent implements OnInit {
-  lists$ = this.http.get<List[]>('/api/lists').pipe(
+export class ListsComponent implements OnInit, OnDestroy {
+  refresh$ = new Subject();
+
+  lists$ = this.refresh$.pipe(
+    startWith(null),
+    switchMap(() => this.http.get<List[]>('/api/lists')),
     retryBackoff({
       initialInterval: 100,
       maxRetries: 5,
@@ -45,11 +50,23 @@ export class ListsComponent implements OnInit {
   addItemName = '';
   editItemName = '';
 
-  constructor(private http: HttpClient, private snackBar: MatSnackBar, private topNav: TopNavService) {
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private http: HttpClient,
+    private snackBar: MatSnackBar,
+    private topNav: TopNavService,
+    private signalr: SignalrService
+  ) {
     this.topNav.updateTopNav({ title: 'Lists' });
+    this.signalr.refresh$.pipe(takeUntil(this.destroy$)).subscribe(() => this.refresh$.next());
   }
 
   ngOnInit(): void {}
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+  }
 
   addList(): void {}
 
@@ -85,10 +102,13 @@ export class ListsComponent implements OnInit {
       this.clearEditingItem();
     }
   }
-  deleteListItem(list: List, item: ListItem): void {
-    list.items = list.items.filter((i) => i.name !== item.name);
+  deleteListItem(event: Event, list: List, item: ListItem): void {
+    event.stopPropagation();
+    if (confirm(`Are you sure you want to delete "${item.name}"?`)) {
+      list.items = list.items.filter((i) => i.name !== item.name);
 
-    this.saveListItem(list, item);
+      this.saveListItem(list, item);
+    }
   }
 
   drop(event: CdkDragDrop<ListItem[]>, list: List) {
