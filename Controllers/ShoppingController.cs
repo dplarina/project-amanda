@@ -20,9 +20,9 @@ public class ShoppingController : ControllerBase
 
   [Route("list")]
   [HttpGet]
-  public IEnumerable<Store> GetGroceryList()
+  public IEnumerable<List> GetGroceryList()
   {
-    var stores = _tablesService.GetStores()
+    var stores = _tablesService.GetLists()
       .Select(s => s.ToDTO())
       .ToList();
     // for each store, filter items to only selected items

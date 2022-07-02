@@ -1,0 +1,75 @@
+<ng-template #loading>
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</ng-template>
+
+<button id="addListFab" mat-fab (click)="addList()">
+  <mat-icon>add</mat-icon>
+</button>
+
+<ng-container *ngIf="lists$ | async as lists; else loading">
+  <div class="list-container" *ngFor="let list of lists; trackBy: trackByListETag">
+    <div class="list-header">
+      <h3 fxFlex>{{ list.name }}</h3>
+      <button mat-icon-button [matMenuTriggerFor]="listMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #listMenu="matMenu">
+        <button mat-menu-item (click)="renameList(list)">Rename list</button>
+        <button mat-menu-item (click)="deleteList(list)">Delete list</button>
+        <button mat-menu-item (click)="deleteCheckedInList(list)">Delete checked items</button>
+        <button mat-menu-item (click)="checkAllInList(list)">Check all</button>
+        <button mat-menu-item (click)="uncheckAllInList(list)">Uncheck all</button>
+      </mat-menu>
+    </div>
+    <form (ngSubmit)="addItem(list)">
+      <mat-form-field class="add-item-field" appearance="standard">
+        <mat-icon class="add-icon" matPrefix>add</mat-icon>
+        <input
+          id="addNameInput"
+          name="name"
+          placeholder="Add item"
+          matInput
+          [(ngModel)]="addItemName"
+          required
+          (focus)="clearEditingItem()"
+        />
+      </mat-form-field>
+    </form>
+    <mat-list cdkDropList [cdkDropListData]="list.items" (cdkDropListDropped)="drop($event, list)">
+      <ng-container *ngIf="{ editingItem: editingItem$ | async } as opts">
+        <mat-list-item
+          *ngFor="let item of list.items; trackBy: trackByItemId"
+          matRipple
+          class="list-item"
+          [class.editing]="opts.editingItem === item"
+          [class.completed]="item.completed"
+          (click)="editListItem(item)"
+          cdkDragLockAxis="y"
+          cdkDrag
+        >
+          <mat-checkbox
+            class="list-item-checkbox"
+            (click)="$event.stopPropagation()"
+            [checked]="item.completed"
+            [(ngModel)]="item.completed"
+          ></mat-checkbox>
+
+          <span class="list-item-name" *ngIf="opts.editingItem !== item">{{ item.name }}</span>
+          <form #form="ngForm" (ngSubmit)="saveListItem(list, item, form)" novalidate *ngIf="opts.editingItem === item">
+            <div class="list-item-editor">
+              <input id="editNameInput" name="name" matInput [(ngModel)]="editItemName" required />
+              <button mat-icon-button color="accent" type="submit" (click)="$event.stopPropagation()">
+                <mat-icon>check</mat-icon>
+              </button>
+
+              <button mat-icon-button color="accent" (click)="deleteListItem(list, item)">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </form>
+          <mat-icon cdkDragHandle class="list-item-drag-icon">drag_indicator</mat-icon>
+        </mat-list-item>
+      </ng-container>
+    </mat-list>
+  </div>
+</ng-container>

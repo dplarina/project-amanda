@@ -3,19 +3,19 @@ using Azure.Data.Tables;
 
 namespace ProjectAmanda.Models.DTO;
 
-public class Store
+public class List
 {
   public string name { get; set; }
-  public List<StoreItem> items { get; set; }
+  public List<ListItem> items { get; set; }
 
-  public StoreEntity ToEntity()
+  public ListEntity ToEntity()
   {
-    return new StoreEntity
+    return new ListEntity
     {
       PartitionKey = "Amanda",
       RowKey = name,
       Name = name,
-      Items = JsonSerializer.Serialize(items ?? new List<StoreItem>())
+      Items = JsonSerializer.Serialize(items ?? new List<ListItem>())
     };
   }
 }

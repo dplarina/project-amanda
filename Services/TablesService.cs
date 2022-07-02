@@ -14,42 +14,42 @@ public class TablesService
     _tableClient = tableClient;
   }
 
-  public IEnumerable<StoreEntity> GetStores()
+  public IEnumerable<ListEntity> GetLists()
   {
     foreach (var entity in _tableClient.Query<TableEntity>())
     {
-      yield return StoreEntity.CreateFromEntity(entity);
+      yield return ListEntity.CreateFromEntity(entity);
     }
   }
 
-  public async Task<StoreEntity?> GetStoreAsync(string name)
+  public async Task<ListEntity?> GetListAsync(string name)
   {
     var response = await _tableClient.GetEntityAsync<TableEntity>("Amanda", name);
 
-    return response?.Value == null ? null : StoreEntity.CreateFromEntity(response.Value);
+    return response?.Value == null ? null : ListEntity.CreateFromEntity(response.Value);
   }
 
-  public async Task UpsertStoreAsync(StoreEntity store)
+  public async Task UpsertListAsync(ListEntity store)
   {
     await _tableClient.UpsertEntityAsync(store);
   }
 
-  public async Task DeleteStoreAsync(string partitionKey, string rowKey)
+  public async Task DeleteListAsync(string partitionKey, string rowKey)
   {
     await _tableClient.DeleteEntityAsync(partitionKey, rowKey);
   }
 
-  public async Task<List<StoreItem>?> GetStoreItemsAsync(string name)
+  public async Task<List<ListItem>?> GetListItemsAsync(string name)
   {
     var response = await _tableClient.GetEntityAsync<TableEntity>("Amanda", name);
 
-    return response?.Value == null ? null : StoreEntity.CreateFromEntity(response.Value).ToDTO().items.ToList();
+    return response?.Value == null ? null : ListEntity.CreateFromEntity(response.Value).ToDTO().items.ToList();
   }
 
-  public async Task<StoreItem?> GetStoreItemAsync(string name, string itemName)
+  public async Task<ListItem?> GetListItemAsync(string name, string itemName)
   {
     var response = await _tableClient.GetEntityAsync<TableEntity>("Amanda", name);
 
-    return response?.Value == null ? null : StoreEntity.CreateFromEntity(response.Value).ToDTO().items.FirstOrDefault(i => i.name == itemName);
+    return response?.Value == null ? null : ListEntity.CreateFromEntity(response.Value).ToDTO().items.FirstOrDefault(i => i.name == itemName);
   }
 }

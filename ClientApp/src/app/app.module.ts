@@ -34,8 +34,8 @@ import { UpdateService } from './update.service';
         loadChildren: () => import('./shopping/shopping.module').then((m) => m.ShoppingModule)
       },
       {
-        path: 'todo',
-        loadChildren: () => import('./todo/todo.module').then((m) => m.TodoModule)
+        path: 'lists',
+        loadChildren: () => import('./lists/lists.module').then((m) => m.ListsModule)
       },
       {
         path: 'notes',

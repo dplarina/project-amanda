@@ -7,7 +7,7 @@ using ProjectAmanda.Models.DTO;
 
 namespace ProjectAmanda.Models;
 
-public class StoreEntity : ITableEntity
+public class ListEntity : ITableEntity
 {
   public string? PartitionKey { get; set; }
   public string? RowKey { get; set; }
@@ -17,20 +17,20 @@ public class StoreEntity : ITableEntity
   public string Name { get; set; }
   public string Items { get; set; }
 
-  public Store ToDTO()
+  public List ToDTO()
   {
-    var items = JsonSerializer.Deserialize<List<StoreItem>>(Items);
+    var items = JsonSerializer.Deserialize<List<ListItem>>(Items);
     items.ForEach(i => { i.categoryId = i.categoryId == 0 ? 1 : i.categoryId; });
-    return new Store()
+    return new List()
     {
       name = Name,
       items = items
     };
   }
 
-  public static StoreEntity CreateFromEntity(TableEntity entity)
+  public static ListEntity CreateFromEntity(TableEntity entity)
   {
-    return new StoreEntity
+    return new ListEntity
     {
       PartitionKey = entity.PartitionKey,
       RowKey = entity.RowKey,

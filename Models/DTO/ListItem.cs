@@ -1,8 +1,8 @@
 namespace ProjectAmanda.Models.DTO;
 
-public class StoreItem
+public class ListItem
 {
-  public StoreItem(string name)
+  public ListItem(string name)
   {
     this.name = name;
   }

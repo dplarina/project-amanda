@@ -1,5 +1,6 @@
 {
-  "extends": ["stylelint-config-sass-guidelines", "stylelint-config-prettier"],
+  "extends": ["stylelint-config-standard-scss", "stylelint-config-prettier-scss"],
+
   "rules": {
     "selector-max-id": null,
     "selector-pseudo-element-no-unknown": [true, { "ignorePseudoElements": ["ng-deep"] }]
